@@ -20,7 +20,7 @@ clean:
 	docker compose down -v
 
 # Rebuild backend image and restart
-rebuild:
+re:
 	docker compose down
 	docker compose build --no-cache backend
 	docker compose up -d
@@ -78,7 +78,7 @@ help:
 	@echo "  up-logs      Start all containers (with logs)"
 	@echo "  down         Stop all containers"
 	@echo "  clean        Stop and wipe all volumes"
-	@echo "  rebuild      Rebuild backend and restart"
+	@echo "  re           Rebuild backend and restart"
 	@echo "  logs         Follow all logs"
 	@echo "  logs-backend Follow backend logs"
 	@echo "  logs-db      Follow db logs"
