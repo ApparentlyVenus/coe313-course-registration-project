@@ -9,6 +9,11 @@ secrets:
 services:
   db:
     image: mariadb:11
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       MYSQL_ROOT_PASSWORD: /run/secrets/db_password
       MYSQL_DATABASE: course_registration
@@ -31,7 +36,8 @@ services:
   backend:
     build: ./courseregistration
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     secrets:
       - db_password
       - db_username
