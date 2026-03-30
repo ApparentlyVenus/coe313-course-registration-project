@@ -35,3 +35,4 @@ Thumbs.db
 *.ipr
 
 nginx/certs/
+secrets/

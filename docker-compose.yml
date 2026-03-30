@@ -1,12 +1,22 @@
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  db_username:
+    file: ./secrets/db_username.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+
 services:
   db:
     image: mariadb:11
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: /run/secrets/db_password
       MYSQL_DATABASE: course_registration
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - db_data:/var/lib/mysql
+    secrets:
+      - db_password
     networks:
       - internal
 
@@ -22,10 +32,12 @@ services:
     build: ./courseregistration
     depends_on:
       - db
+    secrets:
+      - db_password
+      - db_username
+      - jwt_secret
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/course_registration
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
     networks:
       - internal
 
