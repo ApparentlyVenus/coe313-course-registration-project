@@ -1,0 +1,56 @@
+# Maven build output
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Spring Boot
+application-local.properties
+application-dev.properties
+application-prod.properties
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+logs/
+
+# VS Code
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated
+.springBeans
+.sts4-cache
+
+# IntelliJ
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets (never commit these)
+*.env
+.env
+.env.local
+application-secrets.properties

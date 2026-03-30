@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.coe313.courseregistration</groupId>
-	<artifactId>course-registration</artifactId>
+	<artifactId>courseregistration</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>entity</name>
+	<name>coureseregistration</name>
 	<description/>
 	<url/>
 	<licenses>
@@ -35,6 +35,11 @@
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-web</artifactId>
 	    </dependency>
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-test</artifactId>
+    		<scope>test</scope>
+		</dependency>
 	    <dependency>
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-data-jpa</artifactId>
