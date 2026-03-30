@@ -19,6 +19,9 @@ down:
 clean:
 	docker compose down -v
 
+fclean:
+	docker compose down -v --rmi all --remove-orphans
+
 # Rebuild backend image and restart
 re:
 	docker compose down
@@ -78,6 +81,7 @@ help:
 	@echo "  up-logs      Start all containers (with logs)"
 	@echo "  down         Stop all containers"
 	@echo "  clean        Stop and wipe all volumes"
+	@echo "  fclean       Stop, wipe all volumes and remove all images"
 	@echo "  re           Rebuild backend and restart"
 	@echo "  logs         Follow all logs"
 	@echo "  logs-backend Follow backend logs"
