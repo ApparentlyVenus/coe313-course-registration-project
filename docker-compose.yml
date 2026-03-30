@@ -7,7 +7,7 @@ secrets:
     file: ./secrets/jwt_secret.txt
 
 services:
-  db:
+  mariadb:
     image: mariadb:11
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect"]
@@ -18,8 +18,8 @@ services:
       MYSQL_ROOT_PASSWORD: /run/secrets/db_password
       MYSQL_DATABASE: course_registration
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - db_data:/var/lib/mysql
+      - ./mariadb/init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./mariadb/data.sql:/docker-entrypoint-initdb.d/02_data.sql
     secrets:
       - db_password
     networks:
@@ -29,14 +29,14 @@ services:
     image: adminer
     restart: always
     depends_on:
-      - db
+      - mariadb
     networks:
       - internal
 
   backend:
     build: ./courseregistration
     depends_on:
-      db:
+      mariadb:
         condition: service_healthy
     secrets:
       - db_password
