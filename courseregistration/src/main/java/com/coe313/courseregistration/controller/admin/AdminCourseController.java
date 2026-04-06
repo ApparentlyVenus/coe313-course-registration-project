@@ -1,4 +1,4 @@
-package com.coe313.courseregistration.controller;
+package com.coe313.courseregistration.controller.admin;
 
 import java.util.List;
 

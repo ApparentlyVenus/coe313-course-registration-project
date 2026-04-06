@@ -1,4 +1,4 @@
-package com.coe313.courseregistration.controller;
+package com.coe313.courseregistration.controller.admin;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coe313.courseregistration.dto.ApiResponse;
+import com.coe313.courseregistration.dto.ScheduleDto;
 import com.coe313.courseregistration.dto.SectionRequest;
 import com.coe313.courseregistration.dto.SectionResponse;
 import com.coe313.courseregistration.service.SectionService;
@@ -46,7 +47,22 @@ public class AdminSectionController {
     }
     
     @DeleteMapping("/sections/{crn}")
-    public ResponseEntity<ApiResponse<Void>> deleteSection(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Void>> deleteSection(@PathVariable Integer crn) {
 
+    }
+
+    @PostMapping("/sections/{crn}/schedules")
+    public ResponseEntity<ApiResponse<ScheduleDto>> addSchedule(@PathVariable Integer crn, @RequestBody ScheduleDto request) {
+
+    }
+
+    @PutMapping("/sections/{crn}/schedules/{id}")
+    public ResponseEntity<ApiResponse<ScheduleDto>> updateSchedule(@PathVariable Integer crn, @PathVariable Integer id, @RequestBody ScheduleDto request) {
+
+    }
+
+    @DeleteMapping("/sections/{crn}/schedules/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteSchedule(@PathVariable Integer crn, @PathVariable Integer id) {
+        
     }
 }

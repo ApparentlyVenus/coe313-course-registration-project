@@ -1,4 +1,4 @@
-package com.coe313.courseregistration.controller;
+package com.coe313.courseregistration.controller.student;
 
 import java.util.List;
 
@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,33 +19,23 @@ import com.coe313.courseregistration.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/enrollment")
 @RequiredArgsConstructor
-public class AdminEnrollementController {
+public class StudentEnrollmentController {
     private final EnrollmentService enrollmentService;
 
-    @GetMapping("/enrollments")
-    public ResponseEntity<ApiResponse<List<EnrollmentResponse>>> getAllEnrollments() {
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<EnrollmentResponse>>> getEnrollments() {
 
     }
 
-    @GetMapping("/enrollments/{crn}")
-    public ResponseEntity<ApiResponse<EnrollmentResponse>> getEnrollmentsByCrn(@PathVariable Integer crn) {
+    @PostMapping
+    public ResponseEntity<ApiResponse<EnrollmentResponse>> enroll(@RequestBody EnrollmentRequest request) {
 
     }
 
-    @PostMapping("/enrollments") 
-    public ResponseEntity<ApiResponse<EnrollmentResponse>> manualEnrollment(@RequestBody EnrollmentRequest request) {
-
-    }
-
-    @DeleteMapping("/enrollments/{id}")
-    public ResponseEntity<ApiResponse<Void>> manualDrop(@PathVariable Integer id) {
-
-    }
-
-    @PutMapping("/enrollments/{id}/promote")
-    public ResponseEntity<ApiResponse<EnrollmentResponse>> promoteFromWaitlist(@PathVariable Integer id) {
+    @DeleteMapping("/{crn}")
+    public ResponseEntity<ApiResponse<Void>> drop(@PathVariable Integer crn) {
 
     }
 }
