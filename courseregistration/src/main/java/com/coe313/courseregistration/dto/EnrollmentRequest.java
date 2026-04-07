@@ -6,5 +6,6 @@ import lombok.NoArgsConstructor;
 
 @Data @NoArgsConstructor @AllArgsConstructor
 public class EnrollmentRequest {
+    private Integer studentId;
     private Integer crn;
 }

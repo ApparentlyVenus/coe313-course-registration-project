@@ -2,6 +2,7 @@ package com.coe313.courseregistration.controller.admin;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,26 +28,27 @@ public class AdminEnrollementController {
 
     @GetMapping("/enrollments")
     public ResponseEntity<ApiResponse<List<EnrollmentResponse>>> getAllEnrollments() {
-
+        return ResponseEntity.ok(ApiResponse.ok(enrollmentService.getAllEnrollments()));
     }
 
     @GetMapping("/enrollments/{crn}")
-    public ResponseEntity<ApiResponse<EnrollmentResponse>> getEnrollmentsByCrn(@PathVariable Integer crn) {
-
+    public ResponseEntity<ApiResponse<List<EnrollmentResponse>>> getEnrollmentsByCrn(@PathVariable Integer crn) {
+        return ResponseEntity.ok(ApiResponse.ok(enrollmentService.getEnrollmentsByCrn(crn)));
     }
 
     @PostMapping("/enrollments") 
-    public ResponseEntity<ApiResponse<EnrollmentResponse>> manualEnrollment(@RequestBody EnrollmentRequest request) {
-
+    public ResponseEntity<ApiResponse<EnrollmentResponse>> adminEnrollment(@RequestBody EnrollmentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Student enrolled successfully", enrollmentService.adminEnroll(request.getStudentId(), request.getCrn())));
     }
 
     @DeleteMapping("/enrollments/{id}")
-    public ResponseEntity<ApiResponse<Void>> manualDrop(@PathVariable Integer id) {
-
+    public ResponseEntity<ApiResponse<Void>> adminDrop(@PathVariable Integer id) {
+        enrollmentService.adminDrop(id);
+        return ResponseEntity.ok(ApiResponse.ok("Enrollment dropped successfully", null));
     }
 
     @PutMapping("/enrollments/{id}/promote")
     public ResponseEntity<ApiResponse<EnrollmentResponse>> promoteFromWaitlist(@PathVariable Integer id) {
-
+        return ResponseEntity.ok(ApiResponse.ok("Student promoted from waitlist", enrollmentService.promoteFromWaitlist(id)));
     }
 }

@@ -12,6 +12,7 @@ import com.coe313.courseregistration.dto.ApiResponse;
 import com.coe313.courseregistration.dto.CourseResponse;
 import com.coe313.courseregistration.dto.SectionResponse;
 import com.coe313.courseregistration.service.CourseService;
+import com.coe313.courseregistration.service.SectionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,24 +21,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StudentCourseController {
     private final CourseService courseService;
+    private final SectionService sectionService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<CourseResponse>>> getAllCourses() {
-
+        return ResponseEntity.ok(ApiResponse.ok(courseService.getAllCourses()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<CourseResponse>> getCourseById(@PathVariable Integer id) {
-
+        return ResponseEntity.ok(ApiResponse.ok(courseService.getCourseById(id)));
     }
 
     @GetMapping("/{id}/sections")
     public ResponseEntity<ApiResponse<List<SectionResponse>>> getSectionsByCourse(@PathVariable Integer id) {
-
+        return ResponseEntity.ok(ApiResponse.ok(sectionService.getSectionsByCourse(id)));
     }
 
     @GetMapping("/sections/{crn}")
     public ResponseEntity<ApiResponse<SectionResponse>> getSectionByCrn(@PathVariable Integer crn) {
-
+        return ResponseEntity.ok(ApiResponse.ok(sectionService.getSectionByCrn(crn)));
     }
 }
