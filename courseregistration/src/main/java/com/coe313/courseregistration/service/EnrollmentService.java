@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.coe313.courseregistration.dto.EnrollmentResponse;
+import com.coe313.courseregistration.dto.SectionResponse;
 import com.coe313.courseregistration.repository.EnrollmentRepository;
 import com.coe313.courseregistration.repository.SectionRepository;
 import com.coe313.courseregistration.repository.StudentRepository;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EnrollmentService {
-
     private final EnrollmentRepository enrollmentRepository;
     private final SectionRepository sectionRepository;
     private final StudentRepository studentRepository;
@@ -45,7 +45,7 @@ public class EnrollmentService {
      * active = status is enrolled or waitlisted, not dropped.
      * @throws IllegalArgumentException if student not found
      */
-    public List<EnrollmentResponse> getStudentEnrollments(Integer studentId) {
+    public List<EnrollmentResponse> getStudentEnrollments(String email) {
         // TODO: find student by id, throw if not found
         // find all enrollments by student where status != dropped
         // map to EnrollmentResponse
@@ -56,7 +56,7 @@ public class EnrollmentService {
      * Returns all enrollments for a specific student (admin use).
      * @throws IllegalArgumentException if student not found
      */
-    public List<EnrollmentResponse> getEnrollmentsByStudent(Integer studentId) {
+    public List<EnrollmentResponse> getEnrollmentsByStudent(String email) {
         // TODO: find student by id, throw if not found
         // find all enrollments by student including dropped history
         // map to EnrollmentResponse
@@ -86,7 +86,7 @@ public class EnrollmentService {
      * @throws IllegalArgumentException if student or section not found
      * @throws IllegalStateException for any business rule violation above
      */
-    public EnrollmentResponse enroll(Integer studentId, Integer crn) {
+    public EnrollmentResponse enroll(String email, Integer crn) {
         // TODO: implement all checks above in order
         // set enrolledAt = LocalDateTime.now()
         // save and return mapped EnrollmentResponse
@@ -102,7 +102,7 @@ public class EnrollmentService {
      * @throws IllegalArgumentException if enrollment not found
      * @throws IllegalStateException if enrollment is already dropped
      */
-    public void drop(Integer studentId, Integer crn) {
+    public void drop(String email, Integer crn) {
         // TODO: find enrollment by student and crn, throw if not found
         // throw IllegalStateException if status is already dropped
         // set status = dropped
@@ -149,6 +149,19 @@ public class EnrollmentService {
         // throw IllegalStateException("Enrollment is not waitlisted") if status != waitlisted
         // set status = enrolled
         // save and return mapped EnrollmentResponse
+        return null;
+    }
+
+    /**
+     * Returns all actively enrolled sections for the student, with their schedules.
+     * only includes enrollments with status = enrolled (not waitlisted, not dropped)
+     * @throws IllegalArgumentException if user/student not found
+     */
+    public List<SectionResponse> getStudentSchedule(String email) {
+        // TODO: find user by email, then student by user
+        // find all enrollments by student where status = enrolled
+        // for each enrollment get the section
+        // map each section to SectionResponse (includes schedules)
         return null;
     }
 }
