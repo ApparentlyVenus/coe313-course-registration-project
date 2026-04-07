@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sections · LAU Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/index.css"/>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<script src="/js/auth.js"></script>
+<script src="/js/sidebar.js"></script>
+<script>
+  requireAuth('ADMIN');
+  renderSidebar('/admin/sections.html');
+</script>
+
+<div style="padding:32px 40px; max-width:1200px;">
+  <div class="page-header">
+    <div class="section-label mb-1">Management</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <h1 style="color:#D1EBE8;font-size:1.8rem;margin:0;">Sections</h1>
+      <button class="btn btn-primary" onclick="openModal()">+ New Section</button>
+    </div>
+  </div>
+
+  <div style="margin-bottom:20px;">
+    <input class="search-bar" type="text" placeholder="Search sections..." id="searchInput" oninput="filterSections()"/>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>CRN</th>
+          <th>Course</th>
+          <th>Section</th>
+          <th>Professor</th>
+          <th>Schedule</th>
+          <th>Capacity</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="sectionsTable">
+        <tr><td colspan="7" style="text-align:center;color:#2E8B80;padding:32px;">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h3 style="color:#D1EBE8;margin:0;font-size:1.1rem;" id="modalTitle">New Section</h3>
+      <button onclick="closeModal()" style="background:none;border:none;color:#2E8B80;cursor:pointer;font-size:1.2rem;">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <input type="hidden" id="editCrn"/>
+      <div><label>Course</label><select id="fieldCourse"><option value="">Select course...</option></select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><label>Section Number</label><input type="number" id="fieldSectionNum" placeholder="1"/></div>
+        <div><label>Capacity</label><input type="number" id="fieldCapacity" placeholder="30"/></div>
+      </div>
+      <div><label>Professor ID</label><input type="number" id="fieldProfessor" placeholder="Professor ID"/></div>
+      <div><label>Semester ID</label><input type="number" id="fieldSemester" placeholder="1" value="1"/></div>
+      <div style="display:flex;gap:10px;margin-top:8px;justify-content:flex-end;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveSection()">Save Section</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let allSections = [];
+
+async function load() {
+    try {
+        const [sRes, cRes] = await Promise.all([
+            apiFetch('/admin/sections'),
+            apiFetch('/admin/courses')
+        ]);
+        allSections = sRes.data || [];
+        const courses = cRes.data || [];
+        const sel = document.getElementById('fieldCourse');
+        courses.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.courseID; opt.textContent = `${c.abbreviation} — ${c.name}`;
+            sel.appendChild(opt);
+        });
+        renderTable(allSections);
+    } catch(e) { showToast('Failed to load', 'error'); }
+}
+
+function scheduleStr(schedules) {
+    if (!schedules || !schedules.length) return '—';
+    return schedules.map(s => `${s.dayOfWeek.slice(0,3)} ${s.startTime?.slice(0,5)}–${s.endTime?.slice(0,5)}`).join(', ');
+}
+
+function renderTable(sections) {
+    const tbody = document.getElementById('sectionsTable');
+    if (!sections.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#2E8B80;padding:32px;">No sections found</td></tr>';
+        return;
+    }
+    tbody.innerHTML = sections.map(s => {
+        const pct = s.capacity ? Math.round((s.enrolled / s.capacity) * 100) : 0;
+        const fillColor = pct >= 100 ? '#ff4444' : pct >= 80 ? '#ffb347' : '#1A786D';
+        return `<tr>
+            <td><span class="badge">${s.crn}</span></td>
+            <td>
+                <div style="color:#D1EBE8;font-weight:500;">${s.courseName || '—'}</div>
+                <div style="color:#2E8B80;font-size:0.75rem;">${s.courseAbbreviation || ''}</div>
+            </td>
+            <td style="color:#62B1A8;">§${s.sectionNumber}</td>
+            <td style="color:#A8D8D2;">${s.professorName || '—'}</td>
+            <td style="color:#62B1A8;font-size:0.78rem;">${scheduleStr(s.schedules)}</td>
+            <td>
+                <div style="color:#A8D8D2;">${s.enrolled ?? 0} / ${s.capacity}</div>
+                <div class="capacity-bar"><div class="capacity-fill" style="width:${Math.min(pct,100)}%;background:${fillColor};"></div></div>
+            </td>
+            <td>
+                <div style="display:flex;gap:8px;justify-content:flex-end;">
+                    <button class="btn btn-ghost" onclick="editSection(${s.crn})">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteSection(${s.crn})">Delete</button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function filterSections() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    renderTable(allSections.filter(s =>
+        (s.courseName || '').toLowerCase().includes(q) ||
+        (s.courseAbbreviation || '').toLowerCase().includes(q) ||
+        (s.professorName || '').toLowerCase().includes(q) ||
+        String(s.crn).includes(q)
+    ));
+}
+
+function openModal(section = null) {
+    document.getElementById('editCrn').value = section?.crn || '';
+    document.getElementById('modalTitle').textContent = section ? 'Edit Section' : 'New Section';
+    document.getElementById('fieldSectionNum').value = section?.sectionNumber || '';
+    document.getElementById('fieldCapacity').value = section?.capacity || '';
+    document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function editSection(crn) {
+    const s = allSections.find(s => s.crn === crn);
+    if (s) openModal(s);
+}
+
+async function saveSection() {
+    const crn = document.getElementById('editCrn').value;
+    const body = {
+        courseId: parseInt(document.getElementById('fieldCourse').value),
+        sectionNumber: parseInt(document.getElementById('fieldSectionNum').value),
+        capacity: parseInt(document.getElementById('fieldCapacity').value),
+        professorId: parseInt(document.getElementById('fieldProfessor').value),
+        semesterId: parseInt(document.getElementById('fieldSemester').value),
+        schedules: []
+    };
+    try {
+        if (crn) await apiFetch(`/admin/sections/${crn}`, { method: 'PUT', body: JSON.stringify(body) });
+        else await apiFetch('/admin/sections', { method: 'POST', body: JSON.stringify(body) });
+        showToast(crn ? 'Section updated' : 'Section created');
+        closeModal(); load();
+    } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function deleteSection(crn) {
+    if (!confirm('Delete this section?')) return;
+    try {
+        await apiFetch(`/admin/sections/${crn}`, { method: 'DELETE' });
+        showToast('Section deleted'); load();
+    } catch(e) { showToast(e.message, 'error'); }
+}
+
+load();
+</script>
+</body>
+</html>

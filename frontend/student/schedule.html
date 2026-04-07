@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Schedule · LAU</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/index.css"/>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<script src="/js/auth.js"></script>
+<script>requireAuth('STUDENT');</script>
+
+<nav>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid #1A786D;display:flex;align-items:center;justify-content:center;background:#1A786D15;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#83C5BD" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span style="color:#83C5BD;font-family:'DM Serif Display',serif;font-size:0.9rem;">LAU</span>
+  </div>
+  <div class="nav-links">
+    <a href="/student/courses.html" class="nav-link">Courses</a>
+    <a href="/student/enrollments.html" class="nav-link">My Enrollments</a>
+    <a href="/student/schedule.html" class="nav-link active">Schedule</a>
+  </div>
+  <button onclick="logout()" style="background:none;border:1px solid #1A786D25;color:#2E8B80;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.8rem;transition:all 0.15s;"
+    onmouseover="this.style.color='#ff8080';this.style.borderColor='#ff444430';"
+    onmouseout="this.style.color='#2E8B80';this.style.borderColor='#1A786D25';">Sign Out</button>
+</nav>
+
+<div style="padding:32px 40px; max-width:1000px; margin:0 auto;">
+  <div class="page-header">
+    <div class="section-label mb-1">Spring 2026</div>
+    <h1 style="color:#D1EBE8;font-size:1.8rem;margin:0;">My Schedule</h1>
+    <p style="color:#2E8B80;font-size:0.85rem;margin-top:4px;">Weekly class schedule for enrolled sections</p>
+  </div>
+
+  <div id="scheduleGrid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;">
+    <div style="color:#2E8B80;font-size:0.85rem;grid-column:1/-1;padding:32px;text-align:center;">Loading...</div>
+  </div>
+</div>
+
+<script>
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+async function load() {
+    try {
+        const res = await apiFetch('/schedule');
+        const sections = res.data || [];
+        renderSchedule(sections);
+    } catch(e) { showToast('Failed to load schedule', 'error'); }
+}
+
+function renderSchedule(sections) {
+    const grid = document.getElementById('scheduleGrid');
+
+    const byDay = {};
+    DAYS.forEach(d => byDay[d] = []);
+
+    sections.forEach(section => {
+        (section.schedules || []).forEach(slot => {
+            if (byDay[slot.dayOfWeek]) {
+                byDay[slot.dayOfWeek].push({ section, slot });
+            }
+        });
+    });
+
+    const hasAnything = Object.values(byDay).some(d => d.length > 0);
+    if (!hasAnything) {
+        grid.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:48px;border:1px dashed #1A786D30;border-radius:12px;">
+                <div style="color:#2E8B80;margin-bottom:12px;">No classes scheduled</div>
+                <a href="/student/courses.html" style="color:#62B1A8;font-size:0.85rem;text-decoration:none;border:1px solid #1A786D30;padding:8px 16px;border-radius:8px;">Browse Courses →</a>
+            </div>`;
+        return;
+    }
+
+    grid.innerHTML = DAYS.map(day => {
+        const classes = byDay[day].sort((a, b) =>
+            (a.slot.startTime || '').localeCompare(b.slot.startTime || ''));
+        return `
+        <div>
+            <div class="day-header">${day}</div>
+            ${classes.length ? classes.map(({ section, slot }) => `
+                <div class="class-block">
+                    <div style="color:#D1EBE8;font-size:0.85rem;font-weight:500;margin-bottom:4px;">${section.courseAbbreviation || section.courseName}</div>
+                    <div style="color:#83C5BD;font-size:0.75rem;margin-bottom:2px;">${slot.startTime?.slice(0,5)} – ${slot.endTime?.slice(0,5)}</div>
+                    <div style="color:#2E8B80;font-size:0.73rem;">${slot.room || '—'}</div>
+                    <div style="color:#1A786D;font-size:0.72rem;margin-top:4px;">${section.professorName || ''}</div>
+                </div>`).join('') :
+            `<div style="color:#1A786D30;font-size:0.8rem;padding:16px;text-align:center;border:1px dashed #1A786D15;border-radius:8px;">Free</div>`}
+        </div>`;
+    }).join('');
+}
+
+load();
+</script>
+</body>
+</html>

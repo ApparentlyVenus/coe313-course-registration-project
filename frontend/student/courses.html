@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Courses · LAU</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/index.css"/>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<script src="/js/auth.js"></script>
+<script>requireAuth('STUDENT');</script>
+
+<nav>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid #1A786D;display:flex;align-items:center;justify-content:center;background:#1A786D15;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#83C5BD" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span style="color:#83C5BD;font-family:'DM Serif Display',serif;font-size:0.9rem;">LAU</span>
+  </div>
+  <div class="nav-links">
+    <a href="/student/courses.html" class="nav-link active">Courses</a>
+    <a href="/student/enrollments.html" class="nav-link">My Enrollments</a>
+    <a href="/student/schedule.html" class="nav-link">Schedule</a>
+  </div>
+  <button onclick="logout()" style="background:none;border:1px solid #1A786D25;color:#2E8B80;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.8rem;transition:all 0.15s;"
+    onmouseover="this.style.color='#ff8080';this.style.borderColor='#ff444430';"
+    onmouseout="this.style.color='#2E8B80';this.style.borderColor='#1A786D25';">Sign Out</button>
+</nav>
+
+<div style="padding:32px 40px; max-width:1100px; margin:0 auto;">
+  <div class="page-header">
+    <div class="section-label mb-1">Spring 2026</div>
+    <h1 style="color:#D1EBE8;font-size:1.8rem;margin:0;">Course Catalog</h1>
+    <p style="color:#2E8B80;font-size:0.85rem;margin-top:4px;">Browse available courses and register for sections</p>
+  </div>
+
+  <div style="display:flex;gap:12px;margin-bottom:24px;">
+    <input class="search-bar" type="text" placeholder="Search by name, code or department..." id="searchInput" oninput="filterCourses()"/>
+  </div>
+
+  <div id="coursesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+    <div style="color:#2E8B80;font-size:0.85rem;grid-column:1/-1;padding:32px;text-align:center;">Loading...</div>
+  </div>
+</div>
+
+<!-- Sections Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <h3 style="color:#D1EBE8;margin:0;font-size:1.2rem;" id="modalCourse">—</h3>
+      <button onclick="closeModal()" style="background:none;border:none;color:#2E8B80;cursor:pointer;font-size:1.2rem;">✕</button>
+    </div>
+    <div style="color:#2E8B80;font-size:0.8rem;margin-bottom:4px;" id="modalDept"></div>
+    <div style="color:#62B1A8;font-size:0.8rem;margin-bottom:16px;" id="modalPrereqs"></div>
+    <div style="border-top:1px solid #1A786D20;padding-top:16px;">
+      <div style="color:#83C5BD;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Available Sections</div>
+      <div id="sectionsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let allCourses = [];
+
+async function load() {
+    try {
+        const res = await apiFetch('/courses');
+        allCourses = res.data || [];
+        renderGrid(allCourses);
+    } catch(e) { showToast('Failed to load courses', 'error'); }
+}
+
+function renderGrid(courses) {
+    const grid = document.getElementById('coursesGrid');
+    if (!courses.length) {
+        grid.innerHTML = '<div style="color:#2E8B80;font-size:0.85rem;grid-column:1/-1;padding:32px;text-align:center;">No courses found</div>';
+        return;
+    }
+    grid.innerHTML = courses.map(c => `
+        <div class="course-card" onclick="openCourse(${c.courseID})">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+                <span class="badge">${c.abbreviation}</span>
+                <span style="color:#2E8B80;font-size:0.75rem;">${c.credits} credits</span>
+            </div>
+            <div style="color:#D1EBE8;font-weight:500;font-size:0.95rem;margin-bottom:6px;">${c.name}</div>
+            <div style="color:#2E8B80;font-size:0.78rem;margin-bottom:10px;">${c.departmentName || ''}</div>
+            ${c.prerequisites?.length ? `<div style="color:#62B1A8;font-size:0.75rem;">Prereqs: ${c.prerequisites.join(', ')}</div>` : ''}
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid #1A786D15;color:#1A786D;font-size:0.78rem;display:flex;align-items:center;gap:6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                View sections →
+            </div>
+        </div>`).join('');
+}
+
+function filterCourses() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    renderGrid(allCourses.filter(c =>
+        c.name.toLowerCase().includes(q) ||
+        c.abbreviation.toLowerCase().includes(q) ||
+        (c.departmentName || '').toLowerCase().includes(q)
+    ));
+}
+
+async function openCourse(id) {
+    const c = allCourses.find(c => c.courseID === id);
+    document.getElementById('modalCourse').textContent = `${c.abbreviation} — ${c.name}`;
+    document.getElementById('modalDept').textContent = c.departmentName || '';
+    document.getElementById('modalPrereqs').textContent = c.prerequisites?.length ? `Prerequisites: ${c.prerequisites.join(', ')}` : 'No prerequisites';
+    document.getElementById('sectionsList').innerHTML = '<div style="color:#2E8B80;font-size:0.85rem;">Loading sections...</div>';
+    document.getElementById('modal').classList.add('open');
+
+    try {
+        const res = await apiFetch(`/courses/${id}/sections`);
+        const sections = res.data || [];
+        const el = document.getElementById('sectionsList');
+        if (!sections.length) {
+            el.innerHTML = '<div style="color:#2E8B80;font-size:0.85rem;">No sections available</div>';
+            return;
+        }
+        el.innerHTML = sections.map(s => {
+            const pct = s.capacity ? Math.round((s.enrolled / s.capacity) * 100) : 0;
+            const full = pct >= 100;
+            const schedStr = (s.schedules || []).map(x => `${x.dayOfWeek.slice(0,3)} ${x.startTime?.slice(0,5)}–${x.endTime?.slice(0,5)}`).join(', ');
+            return `<div class="section-row">
+                <div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+                        <span style="color:#D1EBE8;font-size:0.85rem;font-weight:500;">§${s.sectionNumber}</span>
+                        <span style="color:#2E8B80;font-size:0.78rem;">CRN ${s.crn}</span>
+                    </div>
+                    <div style="color:#62B1A8;font-size:0.78rem;margin-bottom:2px;">${s.professorName || '—'}</div>
+                    <div style="color:#2E8B80;font-size:0.75rem;">${schedStr || '—'}</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="color:#A8D8D2;font-size:0.8rem;margin-bottom:4px;">${s.enrolled ?? 0}/${s.capacity}</div>
+                    <div class="capacity-bar"><div class="capacity-fill" style="width:${Math.min(pct,100)}%;background:${pct>=100?'#ff4444':pct>=80?'#ffb347':'#1A786D'};"></div></div>
+                    <button class="btn btn-primary" style="margin-top:8px;font-size:0.75rem;padding:6px 12px;" onclick="enroll(${s.crn})">${full ? 'Join Waitlist' : 'Enroll'}</button>
+                </div>
+            </div>`;
+        }).join('');
+    } catch(e) { showToast('Failed to load sections', 'error'); }
+}
+
+async function enroll(crn) {
+    try {
+        const res = await apiFetch('/enrollment', { method: 'POST', body: JSON.stringify({ crn }) });
+        const status = res.data?.status;
+        showToast(status === 'waitlisted' ? 'Added to waitlist' : 'Enrolled successfully');
+        closeModal();
+    } catch(e) { showToast(e.message, 'error'); }
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+load();
+</script>
+</body>
+</html>
