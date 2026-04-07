@@ -56,7 +56,7 @@ public class EnrollmentService {
      * Returns all enrollments for a specific student (admin use).
      * @throws IllegalArgumentException if student not found
      */
-    public List<EnrollmentResponse> getEnrollmentsByStudent(String email) {
+    public List<EnrollmentResponse> getEnrollmentsByStudent(Integer id) {
         // TODO: find student by id, throw if not found
         // find all enrollments by student including dropped history
         // map to EnrollmentResponse
