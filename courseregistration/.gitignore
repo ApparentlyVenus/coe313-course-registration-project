@@ -54,3 +54,7 @@ Thumbs.db
 .env
 .env.local
 application-secrets.properties
+
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
