@@ -1,11 +1,16 @@
 package com.coe313.courseregistration.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.coe313.courseregistration.dto.CourseRequest;
 import com.coe313.courseregistration.dto.CourseResponse;
+import com.coe313.courseregistration.entity.Course;
+import com.coe313.courseregistration.entity.Department;
 import com.coe313.courseregistration.repository.CourseRepository;
 import com.coe313.courseregistration.repository.DepartmentRepository;
 
@@ -22,21 +27,21 @@ public class CourseService {
      * Returns all courses in the system.
      */
     public List<CourseResponse> getAllCourses() {
-        // TODO: fetch all courses
-        // map each Course entity to CourseResponse
-        // include department name, department abbreviation, and prerequisite abbreviations
-        return null;
+        return courseRepository.findAll()
+            .stream()
+            .map(this::mapToResponse)
+            .collect(Collectors.toList());
     }
 
     /**
      * Returns a single course by ID.
      * @throws IllegalArgumentException if course not found
      */
+    @SuppressWarnings("null")
     public CourseResponse getCourseById(Integer id) {
-        // TODO: find course by id
-        // throw new IllegalArgumentException("Course not found") if absent
-        // map to CourseResponse
-        return null;
+        Course course = courseRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        return mapToResponse(course);
     }
 
     /**
@@ -45,13 +50,28 @@ public class CourseService {
      * @throws IllegalArgumentException if any prerequisite course id not found
      */
     public CourseResponse createCourse(CourseRequest request) {
-        // TODO: find department by request.getDepartmentId()
-        // throw new IllegalArgumentException("Department not found") if absent
-        // for each id in request.getPrerequisiteIds(), find the Course
-        // throw new IllegalArgumentException("Prerequisite course not found") if any absent
-        // build Course entity, set fields, set prerequisites
-        // save and return mapped CourseResponse
-        return null;
+        @SuppressWarnings("null")
+        Department department = departmentRepository.findById(request.getDepartmentId())
+            .orElseThrow(() -> new IllegalArgumentException("Department not found"));
+        
+        Set<Course> prerequisites = new HashSet<>();
+        if (request.getPrerequisiteIds() != null) {
+            for (Integer prereqID : request.getPrerequisiteIds()) {
+                @SuppressWarnings("null")
+                Course prereq = courseRepository.findById(prereqID)
+                    .orElseThrow(() -> new IllegalArgumentException("Prerequisite course not found: " + prereqID));
+                prerequisites.add(prereq);
+            }
+        }
+
+        Course course = new Course();
+        course.setName(request.getName());
+        course.setAbbreviation(request.getAbbreviation());
+        course.setCredits(request.getCredits());
+        course.setDepartment(department);
+        course.setPrerequisites(prerequisites);
+
+        return mapToResponse(courseRepository.save(course));
     }
 
     /**
@@ -61,19 +81,59 @@ public class CourseService {
      * @throws IllegalArgumentException if any prerequisite course id not found
      */
     public CourseResponse updateCourse(Integer id, CourseRequest request) {
-        // TODO: find course by id, throw if not found
-        // update fields from request
-        // update department and prerequisites same as createCourse
-        // save and return mapped CourseResponse
-        return null;
+        @SuppressWarnings("null")
+        Course course = courseRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+
+        @SuppressWarnings("null")
+        Department department = departmentRepository.findById(request.getDepartmentId())
+            .orElseThrow(() -> new IllegalArgumentException("Department not found"));
+        
+        Set<Course> prerequisites = new HashSet<>();
+        if (request.getPrerequisiteIds() != null) {
+            for (Integer prereqID : request.getPrerequisiteIds()) {
+                @SuppressWarnings("null")
+                Course prereq = courseRepository.findById(prereqID)
+                    .orElseThrow(() -> new IllegalArgumentException("Prerequisite course not found: " + prereqID));
+                prerequisites.add(prereq);
+            }
+        }
+        
+        course.setName(request.getName());
+        course.setAbbreviation(request.getAbbreviation());
+        course.setCredits(request.getCredits());
+        course.setDepartment(department);
+        course.setPrerequisites(prerequisites);
+
+        return mapToResponse(courseRepository.save(course));
     }
 
     /**
      * Deletes a course by ID.
      * @throws IllegalArgumentException if course not found
      */
+    @SuppressWarnings("null")
     public void deleteCourse(Integer id) {
-        // TODO: find course by id, throw if not found
-        // delete it
+        @SuppressWarnings("null")
+        Course course = courseRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        courseRepository.delete(course);
+    }
+
+    private CourseResponse mapToResponse(Course course) {
+        List<String> prerequisites = course.getPrerequisites()
+            .stream()
+            .map(Course::getAbbreviation)
+            .collect(Collectors.toList());
+
+        return new CourseResponse(
+            course.getCourseId(),
+            course.getName(),
+            course.getAbbreviation(),
+            course.getCredits(),
+            course.getDepartment() != null ? course.getDepartment().getName() : null,
+            course.getDepartment() != null ? course.getDepartment().getAbbreviation() : null,
+            prerequisites
+        );
     }
 }
