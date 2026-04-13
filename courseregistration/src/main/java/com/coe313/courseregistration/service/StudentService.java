@@ -1,10 +1,12 @@
 package com.coe313.courseregistration.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.coe313.courseregistration.dto.StudentResponse;
+import com.coe313.courseregistration.entity.Student;
 import com.coe313.courseregistration.repository.StudentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,19 +21,32 @@ public class StudentService {
      * Returns all students in the system (admin use).
      */
     public List<StudentResponse> getAllStudents() {
-        // TODO: fetch all students
-        // map each Student entity to StudentResponse
-        return null;
+        return studentRepository.findAll()
+            .stream()
+            .map(this::mapToResponse)
+            .collect(Collectors.toList());
     }
 
     /**
      * Returns a single student by ID (admin use).
      * @throws IllegalArgumentException if student not found
      */
+    @SuppressWarnings("null")
     public StudentResponse getStudentById(Integer id) {
-        // TODO: find student by id
-        // throw new IllegalArgumentException("Student not found") if absent
-        // map to StudentResponse
-        return null;
+        Student student = studentRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Student not found"));
+        return mapToResponse(student);
+    }
+
+    /** 
+     * Converts Student entity to student DTO.
+    */
+    private StudentResponse mapToResponse(Student student) {
+        return new StudentResponse(
+            student.getStudentID(),
+            student.getFirstName(),
+            student.getLastName(),
+            student.getEmail()
+        );
     }
 }
