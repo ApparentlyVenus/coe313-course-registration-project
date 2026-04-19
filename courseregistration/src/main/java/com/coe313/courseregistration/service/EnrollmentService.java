@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -209,12 +210,14 @@ public class EnrollmentService {
         Section section = sectionRepository.findById(crn)
             .orElseThrow(() -> new IllegalArgumentException("Section not found"));
 
-        // 1. duplicate check
+        // 1. duplicate check — ignore dropped enrollments
         boolean alreadyEnrolled = enrollmentRepository
-            .existsByStudentAndSection_Course_CourseIdAndSection_Semester(
-                student,
-                section.getCourse().getCourseId(),
-                section.getSemester()
+            .findByStudent(student)
+            .stream()
+            .anyMatch(e ->
+                e.getSection().getCourse().getCourseId().equals(section.getCourse().getCourseId()) &&
+                e.getSection().getSemester().equals(section.getSemester()) &&
+                e.getStatus() != Enrollment.Status.dropped
             );
         if (alreadyEnrolled) {
             throw new IllegalStateException("Already enrolled in this course this semester");
@@ -243,9 +246,23 @@ public class EnrollmentService {
             ? Enrollment.Status.enrolled
             : Enrollment.Status.waitlisted;
 
-        Enrollment enrollment = new Enrollment();
-        enrollment.setStudent(student);
-        enrollment.setSection(section);
+        // reuse existing dropped record if it exists for this exact section
+        Optional<Enrollment> existingDropped = enrollmentRepository
+            .findByStudent(student)
+            .stream()
+            .filter(e -> e.getSection().getCrn().equals(crn)
+                && e.getStatus() == Enrollment.Status.dropped)
+            .findFirst();
+
+        Enrollment enrollment;
+        if (existingDropped.isPresent()) {
+            enrollment = existingDropped.get();
+        } else {
+            enrollment = new Enrollment();
+            enrollment.setStudent(student);
+            enrollment.setSection(section);
+        }
+
         enrollment.setStatus(status);
         enrollment.setEnrolledAt(LocalDateTime.now());
 
@@ -286,7 +303,7 @@ public class EnrollmentService {
         @SuppressWarnings("null")
         Section section = sectionRepository.findById(crn)
             .orElseThrow(() -> new IllegalArgumentException("Section not found"));
-
+    
         boolean exists = enrollmentRepository.findByStudent(student)
             .stream()
             .anyMatch(e -> e.getSection().getCrn().equals(crn)
@@ -294,26 +311,40 @@ public class EnrollmentService {
         if (exists) {
             throw new IllegalStateException("Student is already enrolled in this section");
         }
-
+    
         long enrolledCount = enrollmentRepository
             .findBySectionOrderByEnrolledAtAsc(section)
             .stream()
             .filter(e -> e.getStatus() == Enrollment.Status.enrolled)
             .count();
-
+    
         Enrollment.Status status = enrolledCount < section.getCapacity()
             ? Enrollment.Status.enrolled
             : Enrollment.Status.waitlisted;
-
-        Enrollment enrollment = new Enrollment();
-        enrollment.setStudent(student);
-        enrollment.setSection(section);
+    
+        // reuse dropped record if exists
+        Optional<Enrollment> existingDropped = enrollmentRepository
+            .findByStudent(student)
+            .stream()
+            .filter(e -> e.getSection().getCrn().equals(crn)
+                && e.getStatus() == Enrollment.Status.dropped)
+            .findFirst();
+    
+        Enrollment enrollment;
+        if (existingDropped.isPresent()) {
+            enrollment = existingDropped.get();
+        } else {
+            enrollment = new Enrollment();
+            enrollment.setStudent(student);
+            enrollment.setSection(section);
+        }
+    
         enrollment.setStatus(status);
         enrollment.setEnrolledAt(LocalDateTime.now());
-
+    
         return mapToResponse(enrollmentRepository.save(enrollment));
     }
-
+    
     public void adminDrop(Integer enrollmentId) {
         @SuppressWarnings("null")
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
