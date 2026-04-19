@@ -1,1 +1,67 @@
-<p>students works!</p>
+<app-sidebar/>
+
+<div class="sidebar-main">
+  <div class="page-content">
+    <div class="page-header">
+      <div class="section-label">Management</div>
+      <h1>Students</h1>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <input class="search-bar" placeholder="Search students..." [(ngModel)]="search" (input)="filter()"/>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Email</th>
+            <th>ID</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of filtered; track s.studentId) {
+            <tr>
+              <td>
+                <div class="flex items-center gap-sm">
+                  <div class="avatar">{{ initials(s) }}</div>
+                  <span class="text-primary" style="font-weight:500;">{{ s.firstName }} {{ s.lastName }}</span>
+                </div>
+              </td>
+              <td class="text-accent">{{ s.email }}</td>
+              <td class="text-muted text-xs">#{{ s.studentId }}</td>
+              <td>
+                <button class="btn btn-ghost" (click)="viewEnrollments(s)">View Enrollments</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@if (modalOpen && selectedStudent) {
+  <div class="modal-overlay open">
+    <div class="modal" style="max-width:560px;">
+      <div class="modal-header">
+        <h3>{{ selectedStudent.firstName }} {{ selectedStudent.lastName }} — Enrollments</h3>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+      @if (enrollments.length === 0) {
+        <div class="empty-state">No enrollments found</div>
+      }
+      @for (e of enrollments; track e.enrollmentId) {
+        <div class="enrollment-row">
+          <div>
+            <div class="text-primary text-sm" style="font-weight:500;">{{ e.courseName }}</div>
+            <div class="text-muted text-xs">CRN {{ e.crn }} · §{{ e.sectionNumber }}</div>
+          </div>
+          <span class="badge" [ngClass]="statusClass(e.status)">{{ e.status }}</span>
+        </div>
+      }
+    </div>
+  </div>
+}
