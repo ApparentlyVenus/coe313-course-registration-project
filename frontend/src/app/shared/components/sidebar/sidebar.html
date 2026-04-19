@@ -15,7 +15,7 @@
     </div>
 
     <nav class="sidebar-nav">
-        @for (link of links: track link.path) {
+        @for (link of links; track link.path) {
             <a  [routerLink]="link.path"
                 routerLinkActive="active"
                 class="sidebar-link">
