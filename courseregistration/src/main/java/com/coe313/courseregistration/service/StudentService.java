@@ -43,7 +43,7 @@ public class StudentService {
     */
     private StudentResponse mapToResponse(Student student) {
         return new StudentResponse(
-            student.getStudentID(),
+            student.getStudentId(),
             student.getFirstName(),
             student.getLastName(),
             student.getEmail()

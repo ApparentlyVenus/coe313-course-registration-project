@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @Entity @Data @NoArgsConstructor @AllArgsConstructor
 public class Student {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer studentID;
+    private Integer studentId;
     private String firstName;
     private String lastName;
     private String email;
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User use;
+    private User user;
 }
