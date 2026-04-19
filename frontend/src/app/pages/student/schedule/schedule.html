@@ -1,1 +1,41 @@
-<p>schedule works!</p>
+<app-navbar/>
+
+<div class="page-content" style="max-width:1000px;margin:0 auto;">
+  <div class="page-header">
+    <div class="section-label">Spring 2026</div>
+    <h1>My Schedule</h1>
+    <p>Weekly class schedule for enrolled sections</p>
+  </div>
+
+  @if (!hasClasses) {
+    <div class="empty-state">
+      <div style="margin-bottom:12px;">No classes scheduled</div>
+      <a routerLink="/student/courses" class="btn btn-ghost">Browse Courses →</a>
+    </div>
+  }
+
+  @if (hasClasses) {
+    <div class="schedule-grid">
+      @for (day of days; track day) {
+        <div>
+          <div class="day-header">{{ day }}</div>
+          @if (byDay[day].length === 0) {
+            <div class="free-slot">Free</div>
+          }
+          @for (item of byDay[day]; track item.slot.startTime) {
+            <div class="class-block">
+              <div class="text-primary text-sm" style="font-weight:500;margin-bottom:4px;">
+                {{ item.section.courseAbbreviation || item.section.courseName }}
+              </div>
+              <div class="text-accent text-xs" style="margin-bottom:2px;">
+                {{ item.slot.startTime?.slice(0,5) }} – {{ item.slot.endTime?.slice(0,5) }}
+              </div>
+              <div class="text-muted" style="font-size:0.73rem;">{{ item.slot.room || '—' }}</div>
+              <div style="color:#1A786D;font-size:0.72rem;margin-top:4px;">{{ item.section.professorName }}</div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

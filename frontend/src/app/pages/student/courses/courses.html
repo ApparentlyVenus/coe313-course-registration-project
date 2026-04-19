@@ -1,1 +1,74 @@
-<p>courses works!</p>
+<app-navbar/>
+
+<div class="page-content" style="max-width:1100px;margin:0 auto;">
+  <div class="page-header">
+    <div class="section-label">Spring 2026</div>
+    <h1>Course Catalog</h1>
+    <p>Browse available courses and register for sections</p>
+  </div>
+
+  <div style="margin-bottom:24px;">
+    <input class="search-bar" style="width:100%;" placeholder="Search by name, code or department..." [(ngModel)]="search" (input)="filter()"/>
+  </div>
+
+  <div class="courses-grid">
+    @for (c of filtered; track c.courseId) {
+      <div class="card card-clickable" (click)="openCourse(c)">
+        <div class="flex justify-between items-center" style="margin-bottom:12px;">
+          <span class="badge">{{ c.abbreviation }}</span>
+          <span class="text-muted text-xs">{{ c.credits }} credits</span>
+        </div>
+        <div class="text-primary" style="font-weight:500;font-size:0.95rem;margin-bottom:6px;">{{ c.name }}</div>
+        <div class="text-muted text-xs" style="margin-bottom:10px;">{{ c.departmentName }}</div>
+        @if (c.prerequisites.length) {
+          <div class="text-accent text-xs">Prereqs: {{ c.prerequisites.join(', ') }}</div>
+        }
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid #1A786D15;color:#1A786D;font-size:0.78rem;">
+          View sections →
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (modalOpen && selectedCourse) {
+  <div class="modal-overlay open">
+    <div class="modal" style="max-width:600px;">
+      <div class="modal-header">
+        <h3>{{ selectedCourse.abbreviation }} — {{ selectedCourse.name }}</h3>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+      <div class="text-muted text-xs" style="margin-bottom:4px;">{{ selectedCourse.departmentName }}</div>
+      <div class="text-accent text-xs" style="margin-bottom:16px;">
+        {{ selectedCourse.prerequisites.length ? 'Prerequisites: ' + selectedCourse.prerequisites.join(', ') : 'No prerequisites' }}
+      </div>
+      <div style="border-top:1px solid #1A786D20;padding-top:16px;">
+        <div class="section-label" style="margin-bottom:12px;">Available Sections</div>
+        @if (sections.length === 0) {
+          <div class="empty-state">No sections available</div>
+        }
+        @for (s of sections; track s.crn) {
+          <div class="section-row">
+            <div>
+              <div class="flex items-center gap-sm" style="margin-bottom:4px;">
+                <span class="text-primary text-sm" style="font-weight:500;">§{{ s.sectionNumber }}</span>
+                <span class="text-muted text-xs">CRN {{ s.crn }}</span>
+              </div>
+              <div class="text-accent text-xs" style="margin-bottom:2px;">{{ s.professorName }}</div>
+              <div class="text-muted text-xs">{{ scheduleStr(s) }}</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="text-sm" style="margin-bottom:4px;">{{ s.enrolled }}/{{ s.capacity }}</div>
+              <div class="capacity-bar" style="width:80px;">
+                <div class="capacity-fill" [style.width.%]="capacityPct(s)"></div>
+              </div>
+              <button class="btn btn-primary" style="margin-top:8px;font-size:0.75rem;padding:6px 12px;" (click)="enroll(s.crn)">
+                {{ capacityPct(s) >= 100 ? 'Join Waitlist' : 'Enroll' }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}
