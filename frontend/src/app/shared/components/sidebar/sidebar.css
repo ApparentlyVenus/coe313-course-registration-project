@@ -1,0 +1,99 @@
+/* shared/components/sidebar/sidebar.css */
+.sidebar {
+    background: var(--c-darkest);
+    border-right: 1px solid #1A786D20;
+    width: 240px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+}
+
+.sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid #1A786D20;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-logo {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid var(--c-mid3);
+    display: flex; align-items: center; justify-content: center;
+    background: #1A786D15;
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    color: var(--c-mist);
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-display);
+}
+
+.sidebar-subtitle {
+    color: var(--c-mid4);
+    font-size: 0.7rem;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-size: 0.85rem;
+    color: var(--c-mid4);
+    border: 1px solid transparent;
+    transition: var(--transition);
+}
+
+.sidebar-link:hover {
+    color: var(--c-light);
+    background: #1A786D15;
+}
+
+.sidebar-link.active {
+    color: var(--c-lighter);
+    background: #1A786D25;
+    border-color: #1A786D40;
+}
+
+.sidebar-footer {
+    padding: 16px 12px;
+    border-top: 1px solid #1A786D20;
+}
+
+.sidebar-logout {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--c-mid4);
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.sidebar-logout:hover {
+    background: #3F000015;
+    color: var(--c-danger-text);
+    border-color: #ff444430;
+}

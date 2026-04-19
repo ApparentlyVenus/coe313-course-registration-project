@@ -1,0 +1,55 @@
+<app-navbar/>
+
+<div class="page-content" style="max-width:900px;margin:0 auto;">
+  <div class="page-header">
+    <div class="section-label">Spring 2026</div>
+    <h1>My Enrollments</h1>
+    <p>Your current course registrations</p>
+  </div>
+
+  @if (active.length === 0 && dropped.length === 0) {
+    <div class="empty-state">
+      <div style="margin-bottom:12px;">No enrollments yet</div>
+      <a routerLink="/student/courses" class="btn btn-ghost">Browse Courses →</a>
+    </div>
+  }
+
+  @for (e of active; track e.enrollmentId) {
+    <div class="enrollment-card">
+      <div class="flex justify-between items-center">
+        <div>
+          <div class="flex items-center gap-sm" style="margin-bottom:6px;">
+            <span class="text-primary" style="font-weight:500;font-size:1rem;">{{ e.courseName }}</span>
+            <span class="badge" [ngClass]="statusClass(e.status)">{{ e.status }}</span>
+          </div>
+          <div class="flex gap-md text-accent text-xs">
+            <span>{{ e.courseAbbreviation }}</span>
+            <span>CRN {{ e.crn }} · §{{ e.sectionNumber }}</span>
+            <span>{{ e.professorName }}</span>
+          </div>
+        </div>
+        <button class="btn btn-danger" (click)="drop(e.crn)">Drop</button>
+      </div>
+    </div>
+  }
+
+  @if (dropped.length > 0) {
+    <div class="section-label" style="margin-top:20px;margin-bottom:8px;">Dropped</div>
+    @for (e of dropped; track e.enrollmentId) {
+      <div class="enrollment-card" style="opacity:0.5;">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="flex items-center gap-sm" style="margin-bottom:6px;">
+              <span class="text-primary" style="font-weight:500;">{{ e.courseName }}</span>
+              <span class="badge badge-dropped">dropped</span>
+            </div>
+            <div class="flex gap-md text-accent text-xs">
+              <span>{{ e.courseAbbreviation }}</span>
+              <span>CRN {{ e.crn }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

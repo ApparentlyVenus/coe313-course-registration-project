@@ -1,0 +1,49 @@
+<!-- pages/login/login.html -->
+<div class="login-page">
+    <div class="login-card">
+
+        <div class="login-logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#83C5BD" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+            </svg>
+        </div>
+
+        <div class="login-header">
+            <h1>LAU Registration</h1>
+            <p>Lebanese American University</p>
+        </div>
+
+        @if (error) {
+            <div class="login-error">{{ error }}</div>
+        }
+
+        <form class="login-fields" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input
+                    type="email"
+                    [(ngModel)]="email"
+                    name="email"
+                    placeholder="your@lau.edu"/>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    [(ngModel)]="password"
+                    name="password"
+                    placeholder="••••••••"/>
+            </div>
+            <button type="submit" class="btn-login" [disabled]="loading">
+                {{ loading ? 'Signing in...' : 'Sign In' }}
+            </button>
+        </form>
+
+        <div class="login-footer">
+            Course Registration System · Spring 2026
+        </div>
+
+    </div>
+</div>

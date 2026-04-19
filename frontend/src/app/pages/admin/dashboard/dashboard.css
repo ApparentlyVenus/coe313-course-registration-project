@@ -1,0 +1,47 @@
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.enrollment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: #1A786D10;
+    border-radius: 8px;
+    border: 1px solid #1A786D20;
+    margin-bottom: 8px;
+}
+
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    background: #1A786D15;
+    border: 1px solid #1A786D30;
+    color: var(--c-lighter);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.quick-action:hover { background: #1A786D25; }
+
+h3 { color: var(--c-lighter); font-size: 1rem; margin-bottom: 16px; }

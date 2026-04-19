@@ -1,0 +1,33 @@
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+.day-header {
+    color: var(--c-mid4);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 8px 0;
+    border-bottom: 1px solid #1A786D20;
+    margin-bottom: 10px;
+    font-family: var(--font-display);
+}
+
+.class-block {
+    background: linear-gradient(135deg, var(--c-mid), #003F38);
+    border: 1px solid #1A786D40;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+}
+
+.free-slot {
+    color: #1A786D30;
+    font-size: 0.8rem;
+    padding: 16px;
+    text-align: center;
+    border: 1px dashed #1A786D15;
+    border-radius: 8px;
+}
