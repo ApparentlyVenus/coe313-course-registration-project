@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgClass } from '@angular/common';
 import { Sidebar } from '../../../shared/components/sidebar/sidebar';
 import { Course } from '../../../core/services/course';
 import { CourseResponse, CourseRequest } from '../../../shared/models/course.model';
@@ -8,7 +7,7 @@ import { CourseResponse, CourseRequest } from '../../../shared/models/course.mod
 @Component({
   selector: 'app-courses',
   standalone: true,
-  imports: [Sidebar, FormsModule, NgClass],
+  imports: [Sidebar, FormsModule],
   templateUrl: './courses.html',
   styleUrl: './courses.css',
 })

@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-schedule',
-  imports: [],
+  imports: [Navbar, RouterLink],
   templateUrl: './schedule.html',
   styleUrl: './schedule.css',
 })
