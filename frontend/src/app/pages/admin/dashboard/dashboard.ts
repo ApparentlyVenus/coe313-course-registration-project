@@ -6,11 +6,12 @@ import { Student } from '../../../core/services/student';
 import { Enrollment } from '../../../core/services/enrollment';
 import { EnrollmentResponse } from '../../../shared/models/enrollment.model';
 import { NgClass } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [Sidebar, NgClass],
+  imports: [Sidebar, NgClass, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
