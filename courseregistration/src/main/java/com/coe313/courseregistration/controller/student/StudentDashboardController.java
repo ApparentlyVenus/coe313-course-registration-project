@@ -21,6 +21,6 @@ public class StudentDashboardController {
     @GetMapping("")
     public ResponseEntity<ApiResponse<DashboardResponse>> getDashboard() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(ApiResponse.ok("", dashboardService.getDashboard(email)));
+        return ResponseEntity.ok(ApiResponse.ok("Loaded Dashboard", dashboardService.getDashboard(email)));
     }
 }
