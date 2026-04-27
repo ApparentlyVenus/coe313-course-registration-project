@@ -373,6 +373,19 @@ public class EnrollmentService {
             .collect(Collectors.toList());
     }
 
+    public EnrollmentResponse markCompleted(Integer id) {
+    @SuppressWarnings("null")
+    Enrollment enrollment = enrollmentRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Enrollment not found"));
+
+    if (enrollment.getStatus() != Enrollment.Status.enrolled) {
+        throw new IllegalStateException("Only active enrollments can be marked as completed");
+    }
+
+    enrollment.setStatus(Enrollment.Status.completed);
+    return mapToResponse(enrollmentRepository.save(enrollment));
+}
+
     // =========================================================
     // HELPERS
     // =========================================================
