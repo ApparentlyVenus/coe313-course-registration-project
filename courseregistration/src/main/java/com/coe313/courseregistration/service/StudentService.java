@@ -46,7 +46,9 @@ public class StudentService {
             student.getStudentId(),
             student.getFirstName(),
             student.getLastName(),
-            student.getEmail()
+            student.getEmail(),
+            student.getMajor() != null ? student.getMajor().getName() : null,
+            student.getMajor() != null ? student.getMajor().getAbbreviation() : null
         );
     }
 }

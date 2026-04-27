@@ -91,7 +91,7 @@ public class EnrollmentService {
                 .stream()
                 .anyMatch(e ->
                     e.getSection().getCourse().getCourseId().equals(prereqId) &&
-                    e.getStatus() == Enrollment.Status.enrolled
+                    e.getStatus() == Enrollment.Status.completed
                 );
             if (!completed) {
                 courseRepository.findById(prereqId).ifPresent(c ->
