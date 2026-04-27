@@ -22,6 +22,7 @@ public class Course {
     private String name;
     private String abbreviation;
     private Integer credits;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "department_id")

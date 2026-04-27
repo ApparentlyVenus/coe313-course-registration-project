@@ -31,5 +31,5 @@ public class Enrollment {
     @JoinColumn(name = "crn")
     private Section section;
 
-    public enum Status { enrolled, waitlisted, dropped }
+    public enum Status { enrolled, waitlisted, dropped, completed}
 }
