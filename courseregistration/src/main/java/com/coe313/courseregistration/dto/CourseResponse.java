@@ -14,5 +14,6 @@ public class CourseResponse {
     private Integer credits;
     private String departmentName;        
     private String departmentAbbreviation;
+    private String description;
     private List<String> prerequisites;
 }

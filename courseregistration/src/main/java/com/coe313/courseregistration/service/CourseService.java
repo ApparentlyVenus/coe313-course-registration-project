@@ -25,12 +25,19 @@ public class CourseService {
 
     /**
      * Returns all courses in the system.
+     * Can take schoolId or departmentId as optional parameters
      */
-    public List<CourseResponse> getAllCourses() {
+    public List<CourseResponse> getAllCourses(Integer schoolId, Integer departmentId) {
+        if (departmentId != null) {
+            return courseRepository.findByDepartment_DepartmentId(departmentId)
+                .stream().map(this::mapToResponse).toList();
+        }
+        if (schoolId != null) {
+            return courseRepository.findByDepartment_School_SchoolId(schoolId)
+                .stream().map(this::mapToResponse).toList();
+        }
         return courseRepository.findAll()
-            .stream()
-            .map(this::mapToResponse)
-            .collect(Collectors.toList());
+            .stream().map(this::mapToResponse).toList();
     }
 
     /**
@@ -133,6 +140,7 @@ public class CourseService {
             course.getCredits(),
             course.getDepartment() != null ? course.getDepartment().getName() : null,
             course.getDepartment() != null ? course.getDepartment().getAbbreviation() : null,
+            course.getDescription(),
             prerequisites
         );
     }

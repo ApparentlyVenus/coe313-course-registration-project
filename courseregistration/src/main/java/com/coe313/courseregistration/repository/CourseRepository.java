@@ -10,4 +10,6 @@ import com.coe313.courseregistration.entity.Department;
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
     List<Course> findByDepartment(Department department);
+    List<Course> findByDepartment_DepartmentId(Integer departmentId);
+    List<Course> findByDepartment_School_SchoolId(Integer schoolId);
 }

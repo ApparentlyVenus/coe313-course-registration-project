@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coe313.courseregistration.dto.ApiResponse;
@@ -24,8 +25,10 @@ public class StudentCourseController {
     private final SectionService sectionService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CourseResponse>>> getAllCourses() {
-        return ResponseEntity.ok(ApiResponse.ok(courseService.getAllCourses()));
+    public ResponseEntity<ApiResponse<List<CourseResponse>>> getAllCourses(
+            @RequestParam(required = false) Integer schoolId,
+            @RequestParam(required = false) Integer departmentId) {
+        return ResponseEntity.ok(ApiResponse.ok(courseService.getAllCourses(schoolId, departmentId)));
     }
 
     @GetMapping("/{id}")

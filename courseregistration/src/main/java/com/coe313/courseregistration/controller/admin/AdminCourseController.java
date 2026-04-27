@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coe313.courseregistration.dto.ApiResponse;
@@ -27,8 +28,10 @@ public class AdminCourseController {
     private final CourseService courseService;
 
     @GetMapping("/courses")
-    public ResponseEntity<ApiResponse<List<CourseResponse>>> getAllCourses() {
-        return ResponseEntity.ok(ApiResponse.ok(courseService.getAllCourses()));      
+    public ResponseEntity<ApiResponse<List<CourseResponse>>> getAllCourses(            
+            @RequestParam(required = false) Integer schoolId,
+            @RequestParam(required = false) Integer departmentId) {
+        return ResponseEntity.ok(ApiResponse.ok(courseService.getAllCourses(schoolId, departmentId)));      
     }
 
     @GetMapping("/courses/{id}")
