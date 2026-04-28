@@ -79,4 +79,13 @@ export class Enrollments {
       alert(err?.error?.message || 'Failed to promote student');
     }
   }
+  
+  async markComplete(id: number): Promise<void> {
+    try {
+        await this.enrollmentService.markComplete(id);
+        await this.load();
+    } catch (err: any) {
+        alert(err?.error?.message || 'Failed to mark as completed');
+    }
+  }
 }

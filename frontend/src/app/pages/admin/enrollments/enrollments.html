@@ -42,6 +42,9 @@
                   @if (e.status === 'waitlisted') {
                     <button class="btn btn-warn" (click)="promote(e.enrollmentId)">Promote</button>
                   }
+                  @if (e.status === 'enrolled') {
+                    <button class="btn btn-primary" (click)="markComplete(e.enrollmentId)">Complete</button>
+                  }
                   <button class="btn btn-danger" (click)="drop(e.enrollmentId)">Drop</button>
                 </div>
               </td>

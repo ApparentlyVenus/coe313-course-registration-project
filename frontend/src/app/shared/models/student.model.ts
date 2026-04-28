@@ -3,4 +3,6 @@ export interface StudentResponse {
     firstName: string;
     lastName: string;
     email: string;
+    majorName: string;
+    majorAbbreviation: string;
 }

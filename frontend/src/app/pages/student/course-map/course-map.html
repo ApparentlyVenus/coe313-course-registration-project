@@ -22,7 +22,9 @@
           }
 
           @for (course of groupedByYear[year]; track course.courseId) {
-            <div class="course-card" [class.elective]="!course.isRequired">
+            <div class="course-card" 
+                [class.elective]="!course.isRequired"
+                (click)="openCourse(course)">
               <div class="course-code">{{ course.courseAbbreviation }}</div>
               <div class="course-name">{{ course.courseName }}</div>
               <div class="course-credits">{{ course.credits }} cr</div>
@@ -33,3 +35,33 @@
     </div>
   }
 </div>
+
+@if (modalOpen && selectedCourse) {
+  <div class="modal-overlay open">
+    <div class="modal" style="max-width:520px;">
+      <div class="modal-header">
+        <h3>{{ selectedCourse.abbreviation }} — {{ selectedCourse.name }}</h3>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+      <div class="text-muted text-xs" style="margin-bottom:8px;">
+        {{ selectedCourse.departmentName }}
+      </div>
+      @if (selectedCourse.description) {
+        <p class="text-sm" style="color:var(--c-pale);margin-bottom:16px;line-height:1.6;">
+          {{ selectedCourse.description }}
+        </p>
+      }
+      <div class="text-accent text-xs" style="margin-bottom:16px;">
+        {{ selectedCourse.prerequisites.length
+            ? 'Prerequisites: ' + selectedCourse.prerequisites.join(', ')
+            : 'No prerequisites' }}
+      </div>
+      <div class="flex gap-sm" style="justify-content:flex-end;">
+        <button class="btn btn-ghost" (click)="closeModal()">Close</button>
+        <a routerLink="/student/courses" class="btn btn-primary" (click)="closeModal()">
+          View in Catalogue →
+        </a>
+      </div>
+    </div>
+  </div>
+}

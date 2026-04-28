@@ -61,4 +61,11 @@ export class Enrollment {
       );
       return res.data;
   }
+
+  async markComplete(enrollmentId: number): Promise<EnrollmentResponse> {
+    const res = await firstValueFrom(
+      this.http.patch<{data: EnrollmentResponse}>(`/api/admin/enrollments/${enrollmentId}/complete`, {})
+    )
+    return res.data;
+  }
 }

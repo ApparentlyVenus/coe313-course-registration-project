@@ -22,7 +22,7 @@ export class Course {
 
   async getById(id: number): Promise<CourseResponse> {
       const res = await firstValueFrom(
-          this.http.get<{ data: CourseResponse }>(`${this.ADMIN}/${id}`)
+          this.http.get<{ data: CourseResponse }>(`${this.STUDENT}/${id}`)
       );
       return res.data;
   }
