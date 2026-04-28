@@ -1,1 +1,87 @@
-<p>dashboard works!</p>
+<app-navbar/>
+
+<div class="page-content" style="max-width:1100px;margin:0 auto;">
+
+  @if (!dashboard) {
+    <div class="empty-state">Loading dashboard...</div>
+  }
+
+  @if (dashboard) {
+
+    <!-- HEADER -->
+    <div class="dash-header">
+      <div class="dash-avatar">{{ dashboard.studentName.charAt(0) }}</div>
+      <div class="dash-info">
+        <h1>{{ dashboard.studentName }}</h1>
+        <div class="dash-major">{{ dashboard.majorName }}</div>
+      </div>
+
+      <!-- CREDIT RING -->
+      <div class="credit-ring-wrap">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <!-- track -->
+          <circle cx="70" cy="70" r="54"
+            fill="none" stroke="#1A786D20" stroke-width="12"/>
+          <!-- progress -->
+          <circle cx="70" cy="70" r="54"
+            fill="none"
+            stroke="#1A786D"
+            stroke-width="12"
+            stroke-linecap="round"
+            stroke-dasharray="{{ progressCircle }}"
+            stroke-dashoffset="0"
+            transform="rotate(-90 70 70)"/>
+        </svg>
+        <div class="credit-ring-label">
+          <div class="credit-count">{{ dashboard.completedCredits }}</div>
+          <div class="credit-total">/ {{ dashboard.requiredCredits }}</div>
+          <div class="credit-text">credits</div>
+        </div>
+        <div class="credit-pct">{{ progressPercent }}% complete</div>
+      </div>
+    </div>
+
+    <!-- BODY GRID -->
+    <div class="dash-grid">
+
+      <!-- CURRENT ENROLLMENTS -->
+      <div class="card">
+        <div class="section-label" style="margin-bottom:16px;">Currently Enrolled</div>
+        @if (dashboard.currentEnrollments.length === 0) {
+          <div class="empty-state" style="padding:24px;">No active enrollments</div>
+        }
+        @for (e of dashboard.currentEnrollments; track e.enrollmentId) {
+          <div class="enroll-row">
+            <div>
+              <div class="text-primary text-sm" style="font-weight:500;">{{ e.courseName }}</div>
+              <div class="text-muted text-xs">{{ e.courseAbbreviation }} · CRN {{ e.crn }}</div>
+            </div>
+            <span class="badge" [ngClass]="e.status === 'waitlisted' ? 'badge-waitlisted' : 'badge-enrolled'">
+              {{ e.status }}
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- QUICK STATS + LINKS -->
+      <div class="flex flex-col gap-md">
+        <div class="stat-card">
+          <div class="stat-value">{{ dashboard.currentEnrollments.length }}</div>
+          <div class="stat-label">Active Courses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ dashboard.requiredCredits - dashboard.completedCredits }}</div>
+          <div class="stat-label">Credits Remaining</div>
+        </div>
+        <a routerLink="/student/course-map" class="btn btn-primary" style="text-align:center;">
+          View Course Map →
+        </a>
+        <a routerLink="/student/courses" class="btn btn-ghost" style="text-align:center;">
+          Browse Catalogue →
+        </a>
+      </div>
+
+    </div>
+  }
+
+</div>

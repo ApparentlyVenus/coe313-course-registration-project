@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-course-map',
@@ -6,4 +6,10 @@ import { Component } from '@angular/core';
   templateUrl: './course-map.html',
   styleUrl: './course-map.css',
 })
-export class CourseMap {}
+export class CourseMap implements OnInit {
+
+  async ngOnInit(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  
+}

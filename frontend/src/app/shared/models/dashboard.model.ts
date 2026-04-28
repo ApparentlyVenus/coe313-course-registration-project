@@ -4,6 +4,7 @@ import { MajorCourseResponse } from './major.model';
 export interface DashboardResponse {
     studentName: string;
     majorName: string;
+    majorId: number;
     completedCredits: number;
     requiredCredits: number;
     currentEnrollments: EnrollmentResponse[];
