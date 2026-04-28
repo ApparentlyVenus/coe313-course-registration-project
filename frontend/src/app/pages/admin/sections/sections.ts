@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Sidebar } from '../../../shared/components/sidebar/sidebar';
-import { Section } from '../../../core/services/section';
+import { Section } from '../../../core/services/section.service';
 import { SectionResponse, SectionRequest } from '../../../shared/models/section.model';
 
 @Component({

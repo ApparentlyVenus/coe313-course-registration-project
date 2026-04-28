@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Sidebar } from '../../../shared/components/sidebar/sidebar';
-import { Student } from '../../../core/services/student';
-import { Enrollment } from '../../../core/services/enrollment';
+import { Student } from '../../../core/services/student.service';
+import { Enrollment } from '../../../core/services/enrollment.service';
 import { StudentResponse } from '../../../shared/models/student.model';
 import { EnrollmentResponse } from '../../../shared/models/enrollment.model';
 import { NgClass } from '@angular/common';

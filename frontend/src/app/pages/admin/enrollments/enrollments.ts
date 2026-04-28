@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { Sidebar } from '../../../shared/components/sidebar/sidebar';
-import { Enrollment } from '../../../core/services/enrollment';
+import { Enrollment } from '../../../core/services/enrollment.service';
 import { EnrollmentResponse } from '../../../shared/models/enrollment.model';
 
 @Component({

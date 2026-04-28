@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Navbar } from '../../../shared/components/navbar/navbar';
-import { Course } from '../../../core/services/course';
-import { Enrollment } from '../../../core/services/enrollment';
+import { Course } from '../../../core/services/course.service';
+import { Enrollment } from '../../../core/services/enrollment.service';
 import { CourseResponse } from '../../../shared/models/course.model';
 import { SectionResponse } from '../../../shared/models/section.model';
 

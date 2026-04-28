@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Navbar } from '../../../shared/components/navbar/navbar';
-import { Enrollment } from '../../../core/services/enrollment';
+import { Enrollment } from '../../../core/services/enrollment.service';
 import { EnrollmentResponse } from '../../../shared/models/enrollment.model';
 
 @Component({

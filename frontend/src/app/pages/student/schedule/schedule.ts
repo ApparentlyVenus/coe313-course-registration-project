@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Navbar } from '../../../shared/components/navbar/navbar';
-import { Enrollment } from '../../../core/services/enrollment';
+import { Enrollment } from '../../../core/services/enrollment.service';
 import { SectionResponse } from '../../../shared/models/section.model';
 import { RouterLink } from '@angular/router';
 

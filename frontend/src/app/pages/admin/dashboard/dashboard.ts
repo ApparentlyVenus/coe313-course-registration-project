@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Sidebar } from '../../../shared/components/sidebar/sidebar';
-import { Course } from '../../../core/services/course';
-import { Section } from '../../../core/services/section';
-import { Student } from '../../../core/services/student';
-import { Enrollment } from '../../../core/services/enrollment';
+import { Course } from '../../../core/services/course.service';
+import { Section } from '../../../core/services/section.service';
+import { Student } from '../../../core/services/student.service';
+import { Enrollment } from '../../../core/services/enrollment.service';
 import { EnrollmentResponse } from '../../../shared/models/enrollment.model';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
