@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class DashboardResponse {
     private String studentName;
     private String majorName;
+    private Integer majorId;
     private Integer completedCredits;
     private Integer requiredCredits;
     private List<EnrollmentResponse> currentEnrollments;

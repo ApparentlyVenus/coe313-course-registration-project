@@ -57,6 +57,7 @@ public class DashboardService {
         return new DashboardResponse(
             student.getFirstName() + " " + student.getLastName(),
             student.getMajor() != null ? student.getMajor().getName() : null,
+            student.getMajor() != null ? student.getMajor().getMajorId() : null,
             completedCredits,
             student.getMajor() != null ? student.getMajor().getTotalCreditsRequired() : null,
             current,
