@@ -17,6 +17,8 @@ export const routes: Routes = [
   { path: 'student/courses',     canActivate: [authGuard], loadComponent: () => import('./pages/student/courses/courses').then(m => m.Courses) },
   { path: 'student/enrollments', canActivate: [authGuard], loadComponent: () => import('./pages/student/enrollments/enrollments').then(m => m.Enrollments) },
   { path: 'student/schedule',    canActivate: [authGuard], loadComponent: () => import('./pages/student/schedule/schedule').then(m => m.Schedule) },
-
+  { path: 'student/dashboard',   canActivate: [authGuard], loadComponent: () => import('./pages/student/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'student/course-map',  canActivate: [authGuard], loadComponent: () => import('./pages/student/course-map/course-map').then(m => m.CourseMap) },
+  
   { path: '**', redirectTo: 'login' }
 ]
