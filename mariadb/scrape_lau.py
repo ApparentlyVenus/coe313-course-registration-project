@@ -1,31 +1,18 @@
 #!/usr/bin/env python3
 """
-LAU Catalogue Scraper
+LAU Catalogue Scraper using Playwright
 Run: python3 scrape_lau.py
-Output: scraped_courses.sql  (departments + courses + prerequisites)
-Requires: pip install requests beautifulsoup4
+Output: scraped_courses.sql
 """
 
 import re
 import time
-import requests
 from bs4 import BeautifulSoup
-
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Referer": "https://catalog.lau.edu.lb/2025-2026/courses/",
-}
+from playwright.sync_api import sync_playwright
 
 BASE_URL = "https://catalog.lau.edu.lb/2025-2026/courses/{prefix}.php"
 
-# (url_prefix, dept_full_name, school_abbreviation)
 DEPARTMENTS = [
-    # School of Engineering
     ("coe",  "Computer Engineering",              "ENG"),
     ("ele",  "Electrical Engineering",            "ENG"),
     ("mee",  "Mechanical Engineering",            "ENG"),
@@ -35,7 +22,6 @@ DEPARTMENTS = [
     ("mce",  "Mechatronics",                      "ENG"),
     ("gne",  "General Engineering",               "ENG"),
     ("enm",  "Engineering Management",            "ENG"),
-    # School of Arts & Sciences
     ("mth",  "Mathematics",                       "LAS"),
     ("phy",  "Physics",                           "LAS"),
     ("chm",  "Chemistry",                         "LAS"),
@@ -54,7 +40,6 @@ DEPARTMENTS = [
     ("cys",  "Cybersecurity",                     "LAS"),
     ("dsc",  "Data Science",                      "LAS"),
     ("aai",  "Applied Artificial Intelligence",   "LAS"),
-    # Business
     ("acc",  "Accounting",                        "BUS"),
     ("fin",  "Finance",                           "BUS"),
     ("mgt",  "Management",                        "BUS"),
@@ -63,10 +48,8 @@ DEPARTMENTS = [
     ("ibs",  "International Business",            "BUS"),
     ("qba",  "Quantitative Business Analysis",    "BUS"),
     ("opm",  "Operations and Production Mgmt",    "BUS"),
-    # Architecture
     ("arch", "Architecture",                      "ARCH"),
     ("inar", "Interior Design",                   "ARCH"),
-    # Pharmacy / Nursing / Comm
     ("pha",  "Pharmacy",                          "PHAR"),
     ("nur",  "Nursing",                           "NUR"),
     ("com",  "Communication",                     "COMM"),
@@ -82,18 +65,6 @@ SCHOOLS = {
     "NUR":  "School of Nursing",
     "COMM": "School of Communication Arts",
 }
-
-
-def fetch(url):
-    try:
-        r = requests.get(url, headers=HEADERS, timeout=15)
-        if r.status_code != 200:
-            print(f"  [SKIP] {url} → HTTP {r.status_code}")
-            return None
-        return BeautifulSoup(r.text, "html.parser")
-    except Exception as e:
-        print(f"  [ERROR] {url} → {e}")
-        return None
 
 
 def parse_credits(text):
@@ -116,23 +87,41 @@ def escape(s):
     return s.replace("'", "''") if s else ""
 
 
-def scrape_department(prefix):
+def scrape_department(page, prefix):
     url = BASE_URL.format(prefix=prefix)
-    soup = fetch(url)
-    if not soup:
+    try:
+        response = page.goto(url, wait_until="domcontentloaded", timeout=30000)
+        if response.status == 404:
+            print(f"  [SKIP] {prefix} → 404")
+            return []
+        page.wait_for_timeout(1000)
+    except Exception as e:
+        print(f"  [ERROR] {prefix} → {e}")
         return []
 
+    soup = BeautifulSoup(page.content(), "html.parser")
+
+    # with open(f"debug_{prefix}.html", "w") as f:
+    #     f.write(page.content())
+    # print(f"  [DEBUG] h3 count: {len(soup.find_all('h3'))}, h2: {len(soup.find_all('h2'))}, title: {soup.title.string if soup.title else 'none'}")
+    
     courses = []
+
     for h3 in soup.find_all("h3"):
-        title = h3.get_text(strip=True)
-        m = re.match(r"([A-Z]{2,5})\s*(\d{3}[A-Z]?H?)\s+(.*)", title)
+        span = h3.find("span", class_="crn")
+        if not span:
+            continue
+
+        code = span.get_text(strip=True)          # e.g. "COE312"
+        name = h3.get_text(strip=True).replace(code, "").strip()  # rest of h3 text
+
+        # parse prefix and number from code
+        m = re.match(r"([A-Z]{2,5})(\d{3}[A-Z0-9]*)", code)
         if not m:
             continue
 
-        code_prefix = m.group(1)
-        code_num    = m.group(2)
-        name        = m.group(3).strip()
-        abbreviation = f"{code_prefix} {code_num}"
+        code_prefix  = m.group(1)
+        abbreviation = f"{code_prefix} {m.group(2)}"
 
         credits = 3
         h4 = h3.find_next_sibling("h4")
@@ -170,16 +159,30 @@ def scrape_department(prefix):
 def main():
     all_courses = []
 
-    for prefix, dept_name, school_abbr in DEPARTMENTS:
-        print(f"Scraping {prefix.upper()} — {dept_name} ...")
-        courses = scrape_department(prefix)
-        for c in courses:
-            c["school_abbr"] = school_abbr
-            c["dept_name"]   = dept_name
-        all_courses.extend(courses)
-        time.sleep(0.5)
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        )
+        page = context.new_page()
 
-    # deduplicate by abbreviation
+        # warm up — visit the main page first so Cloudflare sets cookies
+        print("Warming up browser...")
+        page.goto("https://catalog.lau.edu.lb/2025-2026/", wait_until="domcontentloaded", timeout=30000)
+        page.wait_for_timeout(2000)
+
+        for prefix, dept_name, school_abbr in DEPARTMENTS:
+            print(f"Scraping {prefix.upper()} — {dept_name} ...")
+            courses = scrape_department(page, prefix)
+            for c in courses:
+                c["school_abbr"] = school_abbr
+                c["dept_name"]   = dept_name
+            all_courses.extend(courses)
+            time.sleep(0.8)
+
+        browser.close()
+
+    # deduplicate
     seen = set()
     unique = []
     for c in all_courses:
@@ -189,7 +192,7 @@ def main():
 
     print(f"\nTotal unique courses: {len(unique)}")
 
-    # --- ID maps ---
+    # ID maps
     school_abbrs  = list(dict.fromkeys(s for _, _, s in DEPARTMENTS))
     school_id_map = {a: i+1 for i, a in enumerate(school_abbrs)}
 
@@ -205,24 +208,20 @@ def main():
 
     course_id_map = {c["abbreviation"]: i+1 for i, c in enumerate(unique)}
 
-    # --- Build SQL ---
+    # Build SQL
     out = []
-
     out.append("USE course_registration;\n")
 
-    # Schools
-    out.append("-- SCHOOLS")
-    out.append("INSERT INTO school (school_id, name, abbreviation) VALUES")
-    vals = [f"({school_id_map[a]}, '{escape(SCHOOLS[a])}', '{a}')" for a in school_abbrs]
-    out.append(",\n".join(vals) + ";\n")
+    # out.append("-- SCHOOLS")
+    # out.append("INSERT INTO school (school_id, name, abbreviation) VALUES")
+    # vals = [f"({school_id_map[a]}, '{escape(SCHOOLS[a])}', '{a}')" for a in school_abbrs]
+    # out.append(",\n".join(vals) + ";\n")
 
-    # Departments
     out.append("-- DEPARTMENTS")
     out.append("INSERT INTO department (department_id, name, abbreviation, school_id) VALUES")
     vals = [f"({did}, '{escape(dn)}', '{da}', {sid})" for did, dn, da, sid in dept_rows]
     out.append(",\n".join(vals) + ";\n")
 
-    # Courses
     out.append("-- COURSES")
     out.append("INSERT INTO course (course_id, name, abbreviation, credits, description, department_id) VALUES")
     vals = []
@@ -237,7 +236,6 @@ def main():
         )
     out.append(",\n".join(vals) + ";\n")
 
-    # Prerequisites
     prereq_rows = []
     skipped = []
     for c in unique:
@@ -258,7 +256,7 @@ def main():
         out.append(",\n".join(f"({cid}, {pid})" for cid, pid in prereq_rows) + ";\n")
 
     if skipped:
-        out.append("-- Skipped prereqs (course outside scraped scope):")
+        out.append("-- Skipped prereqs (outside scraped scope):")
         for s in skipped:
             out.append(f"--   {s}")
 
