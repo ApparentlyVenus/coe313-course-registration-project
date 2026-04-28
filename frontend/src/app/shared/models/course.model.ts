@@ -5,6 +5,7 @@ export interface CourseResponse {
     credits: number;
     departmentName: string;
     departmentAbbreviation: string;
+    description: string;
     prerequisites: string[];
 }
 
