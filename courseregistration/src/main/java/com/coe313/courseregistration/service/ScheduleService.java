@@ -59,7 +59,6 @@ public class ScheduleService {
      */
     @SuppressWarnings("null")
     public void deleteSchedule(Integer scheduleId) {
-        @SuppressWarnings("null")
         Schedule schedule = scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
         scheduleRepository.delete(schedule);

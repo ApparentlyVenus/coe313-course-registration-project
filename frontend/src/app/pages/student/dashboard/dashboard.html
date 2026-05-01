@@ -19,16 +19,14 @@
       <!-- CREDIT RING -->
       <div class="credit-ring-wrap">
         <svg width="140" height="140" viewBox="0 0 140 140">
-          <!-- track -->
           <circle cx="70" cy="70" r="54"
             fill="none" stroke="#1A786D20" stroke-width="12"/>
-          <!-- progress -->
           <circle cx="70" cy="70" r="54"
             fill="none"
             stroke="#1A786D"
             stroke-width="12"
             stroke-linecap="round"
-            stroke-dasharray="{{ progressCircle }}"
+            [attr.stroke-dasharray]="progressCircle"
             stroke-dashoffset="0"
             transform="rotate(-90 70 70)"/>
         </svg>
@@ -44,7 +42,6 @@
     <!-- BODY GRID -->
     <div class="dash-grid">
 
-      <!-- CURRENT ENROLLMENTS -->
       <div class="card">
         <div class="section-label" style="margin-bottom:16px;">Currently Enrolled</div>
         @if (dashboard.currentEnrollments.length === 0) {
@@ -63,7 +60,6 @@
         }
       </div>
 
-      <!-- QUICK STATS + LINKS -->
       <div class="flex flex-col gap-md">
         <div class="stat-card">
           <div class="stat-value">{{ dashboard.currentEnrollments.length }}</div>
@@ -73,7 +69,7 @@
           <div class="stat-value">{{ dashboard.requiredCredits - dashboard.completedCredits }}</div>
           <div class="stat-label">Credits Remaining</div>
         </div>
-        <a routerLink="/student/course-map" class="btn btn-primary" style="text-align:center;">
+        <a routerLink="/student/dashboard" class="btn btn-primary" style="text-align:center;">
           View Course Map →
         </a>
         <a routerLink="/student/courses" class="btn btn-ghost" style="text-align:center;">

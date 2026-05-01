@@ -121,7 +121,6 @@ public class CourseService {
      */
     @SuppressWarnings("null")
     public void deleteCourse(Integer id) {
-        @SuppressWarnings("null")
         Course course = courseRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Course not found"));
         courseRepository.delete(course);

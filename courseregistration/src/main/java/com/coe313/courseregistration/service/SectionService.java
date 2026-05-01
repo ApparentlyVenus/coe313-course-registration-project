@@ -146,7 +146,6 @@ public class SectionService {
      */
     @SuppressWarnings("null")
     public void deleteSection(Integer crn) {
-        @SuppressWarnings("null")
         Section section = sectionRepository.findById(crn)
             .orElseThrow(() -> new IllegalArgumentException("Section not found"));
         sectionRepository.delete(section);
