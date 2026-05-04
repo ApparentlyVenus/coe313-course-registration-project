@@ -62,10 +62,10 @@ shell-frontend:
 certs:
 	mkdir -p nginx/certs
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-		-keyout nginx/certs/key.pem \
-		-out nginx/certs/cert.pem \
-		-subj "/C=LB/ST=Beirut/L=Beirut/O=LAU/CN=registration.lau.local"
-	@echo "Certs generated in nginx/certs/"
+    	-keyout nginx/certs/key.pem \
+    	-out nginx/certs/cert.pem \
+    	-subj "/C=LB/ST=Beirut/L=Beirut/O=LAU/CN=registration.lau.local" \
+    	-addext "subjectAltName=DNS:registration.lau.local,IP:10.21.191.189"
 
 secrets:
 	mkdir -p secrets
