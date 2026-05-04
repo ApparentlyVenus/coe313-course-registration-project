@@ -43,7 +43,7 @@ This will:
 - Generate a self-signed SSL certificate in `nginx/certs/`
 - Generate database credentials and JWT secret in `secrets/`
 
-### 3. (OPTIONAL) Add the local domain to your hosts file
+### 3. Add the local domain to your hosts file
 
 ```bash
 # Linux / macOS
@@ -52,6 +52,7 @@ sudo echo "127.0.0.1 registration.lau.local" >> /etc/hosts
 # Windows (run as Administrator)
 echo 127.0.0.1 registration.lau.local >> C:\Windows\System32\drivers\etc\hosts
 ```
+This is required for the nginx and SSL certificate configuation
 
 ### 4. Start the application
 
