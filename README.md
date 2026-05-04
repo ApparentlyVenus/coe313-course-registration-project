@@ -73,7 +73,7 @@ Wait about 30 seconds for all services to initialize.
 | Service | URL |
 |---|---|
 | Application (local) | https://registration.lau.local |
-| Application (network) | https://<your-local-ip> |
+| Application (network) | https://your-local-ip |
 | Adminer (DB UI) | https://registration.lau.local/adminer |
 
 > **Note:** Your browser will warn about the self-signed certificate. Click "Advanced" and proceed.
