@@ -77,6 +77,7 @@ Wait about 30 seconds for all services to initialize.
 | Adminer (DB UI) | https://registration.lau.local/adminer |
 
 > **Note:** Your browser will warn about the self-signed certificate. Click "Advanced" and proceed.
+> 
 > **Network access:** To access from other devices on the same network, find your local IP with `ip a` (Linux/macOS) or `ipconfig` (Windows), then navigate to `https://<your-ip>`. You may need to regenerate the SSL cert with your IP using `make certs` after updating `nginx/nginx.conf` with your IP in `server_name`, as well as updating the `make certs` command itself in the `Makefile` with your ip address.
 ---
 
