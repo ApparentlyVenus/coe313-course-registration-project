@@ -7,13 +7,30 @@
     <p>Browse available courses and register for sections</p>
   </div>
 
-  <div class="flex gap-sm" style="margin-bottom:24px;">
-    <input class="search-bar" style="flex:1;"
-        placeholder="Search by name, code or department..."
-        [(ngModel)]="search"
-        (keydown.enter)="applySearch()"/>
-    <button class="btn btn-ghost" (click)="clearSearch()">Clear</button>
-    <button class="btn btn-primary" (click)="applySearch()">Search</button>
+  <div class="filters-bar">
+    <div class="search-row">
+      <input class="search-bar" style="flex:1;"
+          placeholder="Search by name, code or department..."
+          [(ngModel)]="search"
+          (keydown.enter)="applySearch()"/>
+      <button class="btn btn-ghost" (click)="clearSearch()">Clear</button>
+      <button class="btn btn-primary" (click)="applySearch()">Search</button>
+    </div>
+
+    <div class="filter-row">
+      <select [(ngModel)]="selectedDepartmentId">
+        <option [ngValue]="null">All Departments</option>
+        @for (dept of departments; track dept.departmentId) {
+          <option [ngValue]="dept.departmentId">
+            {{ dept.abbreviation }} — {{ dept.name }}
+          </option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="results-count text-muted text-xs" style="margin-bottom:16px;">
+    {{ filtered.length }} courses
   </div>
 
   <div class="courses-grid">
@@ -49,25 +66,26 @@
         <h3>{{ selectedCourse.abbreviation }} — {{ selectedCourse.name }}</h3>
         <button class="modal-close" (click)="closeModal()">✕</button>
       </div>
-
       <div class="text-muted text-xs" style="margin-bottom:4px;">
         {{ selectedCourse.departmentName }}
       </div>
+      @if (selectedCourse.description) {
+        <p class="text-sm" style="color:var(--c-pale);margin-bottom:16px;line-height:1.6;">
+          {{ selectedCourse.description }}
+        </p>
+      }
       <div class="text-accent text-xs" style="margin-bottom:16px;">
         {{ selectedCourse.prerequisites.length
             ? 'Prerequisites: ' + selectedCourse.prerequisites.join(', ')
             : 'No prerequisites' }}
       </div>
-
       <div style="border-top:1px solid #1A786D20;padding-top:16px;">
         <div class="section-label" style="margin-bottom:12px;">Available Sections</div>
-
         @if (sections.length === 0) {
           <div class="text-muted text-sm" style="padding:16px;text-align:center;">
-            Loading sections...
+            No sections available
           </div>
         }
-
         @for (s of sections; track s.crn) {
           <div class="section-row">
             <div>

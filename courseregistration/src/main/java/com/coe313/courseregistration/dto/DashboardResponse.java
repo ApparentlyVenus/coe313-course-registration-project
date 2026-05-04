@@ -14,5 +14,6 @@ public class DashboardResponse {
     private Integer completedCredits;
     private Integer requiredCredits;
     private List<EnrollmentResponse> currentEnrollments;
+    private List<EnrollmentResponse> completedEnrollments;
     private List<MajorCourseResponse> courseMap;
 }

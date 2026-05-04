@@ -2,9 +2,11 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import { Course } from '../../../core/services/course.service';
-import { Enrollment } from '../../../core/services/enrollment.service';
+import { DepartmentService } from '../../../core/services/department.service';
 import { CourseResponse } from '../../../shared/models/course.model';
+import { DepartmentResponse } from '../../../shared/models/department.model';
 import { SectionResponse } from '../../../shared/models/section.model';
+import { Enrollment } from '../../../core/services/enrollment.service';
 
 @Component({
     selector: 'app-student-courses',
@@ -15,27 +17,39 @@ import { SectionResponse } from '../../../shared/models/section.model';
 })
 export class Courses implements OnInit {
     private courseService = inject(Course);
+    private departmentService = inject(DepartmentService);
     private enrollmentService = inject(Enrollment);
 
     courses: CourseResponse[] = [];
+    departments: DepartmentResponse[] = [];
     search = '';
     displaySearch = '';
+    selectedDepartmentId: number | null = null;
     modalOpen = false;
     selectedCourse: CourseResponse | null = null;
     sections: SectionResponse[] = [];
 
     get filtered(): CourseResponse[] {
-        const q = this.displaySearch.toLowerCase();
-        if (!q) return this.courses;
-        return this.courses.filter(c =>
-            c.name.toLowerCase().includes(q) ||
-            c.abbreviation.toLowerCase().includes(q) ||
-            (c.departmentName || '').toLowerCase().includes(q)
-        );
+        return this.courses.filter(c => {
+            const matchesSearch = !this.displaySearch ||
+                c.name.toLowerCase().includes(this.displaySearch.toLowerCase()) ||
+                c.abbreviation.toLowerCase().includes(this.displaySearch.toLowerCase()) ||
+                (c.departmentName || '').toLowerCase().includes(this.displaySearch.toLowerCase());
+
+            const matchesDepartment = !this.selectedDepartmentId ||
+                c.departmentAbbreviation === this.departments.find(
+                    d => d.departmentId === this.selectedDepartmentId
+                )?.abbreviation;
+
+            return matchesSearch && matchesDepartment;
+        });
     }
 
     async ngOnInit(): Promise<void> {
-        this.courses = await this.courseService.getAllForStudent();
+        [this.courses, this.departments] = await Promise.all([
+            this.courseService.getAllForStudent(),
+            this.departmentService.getAll()
+        ]);
     }
 
     applySearch(): void {
@@ -45,6 +59,7 @@ export class Courses implements OnInit {
     clearSearch(): void {
         this.search = '';
         this.displaySearch = '';
+        this.selectedDepartmentId = null;
     }
 
     async openCourse(course: CourseResponse): Promise<void> {

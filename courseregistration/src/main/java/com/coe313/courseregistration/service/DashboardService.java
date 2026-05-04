@@ -40,17 +40,23 @@ public class DashboardService {
             .map(this::mapToResponse)
             .toList();
 
+        List<EnrollmentResponse> completed = enrollments.stream()
+            .filter(e -> e.getStatus() == Enrollment.Status.completed)
+            .map(this::mapToResponse)
+            .toList();
+
         List<MajorCourseResponse> courseMap = student.getMajor() != null
             ? majorCourseRepository.findByMajor_MajorId(student.getMajor().getMajorId())
                 .stream().map(this::mapToResponse).toList()
             : List.of();
 
-        return mapToResponse(student, current, completedCredits, courseMap);
+        return mapToResponse(student, current, completed, completedCredits, courseMap);
     }
 
     private DashboardResponse mapToResponse(
         Student student, 
         List<EnrollmentResponse> current,
+        List<EnrollmentResponse> completed,
         Integer completedCredits, 
         List<MajorCourseResponse> courseMap) {
 
@@ -61,6 +67,7 @@ public class DashboardService {
             completedCredits,
             student.getMajor() != null ? student.getMajor().getTotalCreditsRequired() : null,
             current,
+            completed,
             courseMap
         );
     }

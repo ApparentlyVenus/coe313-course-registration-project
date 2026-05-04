@@ -5,6 +5,7 @@ import { MajorCourseResponse } from '../../../shared/models/major.model';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import { CourseResponse } from '../../../shared/models/course.model';
 import { Course } from '../../../core/services/course.service';
+import { DashboardResponse } from '../../../shared/models/dashboard.model';
 
 @Component({
   selector: 'app-course-map',
@@ -17,12 +18,14 @@ export class CourseMap implements OnInit {
   private dashboardService = inject(DashboardService);
   private courseService = inject(Course);
   
+  dashboard : DashboardResponse | null = null;
   courseMap : MajorCourseResponse[] | null = null;
   selectedCourse: CourseResponse | null = null;
   modalOpen = false;
 
   async ngOnInit(): Promise<void> {
-    this.courseMap = (await this.dashboardService.getDashboard()).courseMap;
+    this.dashboard = (await this.dashboardService.getDashboard())
+    this.courseMap = this.dashboard.courseMap;
   }
   
   years = [1, 2, 3, 4, 5];
@@ -51,6 +54,15 @@ export class CourseMap implements OnInit {
   closeModal(): void {
     this.modalOpen = false;
     this.selectedCourse = null;
+  }
+
+  getCourseStatus(course: MajorCourseResponse): 'completed' | 'ongoing' | 'not-started' {
+    const abbr = course.courseAbbreviation;
+    if (this.dashboard!.completedEnrollments.some(e => e.courseAbbreviation === abbr))
+        return 'completed';
+    if (this.dashboard!.currentEnrollments.some(e => e.courseAbbreviation === abbr))
+        return 'ongoing';
+    return 'not-started';
   }
 
 }

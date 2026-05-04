@@ -8,5 +8,6 @@ export interface DashboardResponse {
     completedCredits: number;
     requiredCredits: number;
     currentEnrollments: EnrollmentResponse[];
+    completedEnrollments: EnrollmentResponse[];
     courseMap: MajorCourseResponse[];
 }

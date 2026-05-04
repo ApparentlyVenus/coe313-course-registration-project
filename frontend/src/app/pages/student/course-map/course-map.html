@@ -1,35 +1,42 @@
 <app-navbar/>
 
-<div class="page-content">
+<div class="page-content map-page">
   <div class="page-header">
     <div class="section-label">Academic Plan</div>
     <h1>Course Map</h1>
-    <p>Your major's recommended course sequence</p>
+    <div class="legend">
+      <span class="legend-item completed">Completed</span>
+      <span class="legend-item ongoing">In Progress</span>
+      <span class="legend-item not-started">Not Started</span>
+    </div>
   </div>
 
-  @if (!courseMap) {
+  @if (!dashboard) {
     <div class="empty-state">Loading course map...</div>
   }
 
-  @if (courseMap) {
-    <div class="map-grid">
+  @if (dashboard) {
+    <div class="map-table">
       @for (year of years; track year) {
-        <div class="year-column">
-          <div class="year-header">Year {{ year }}</div>
-          
-          @if (!groupedByYear[year] || groupedByYear[year].length === 0) {
-            <div class="empty-year">—</div>
-          }
-
-          @for (course of groupedByYear[year]; track course.courseId) {
-            <div class="course-card" 
-                [class.elective]="!course.isRequired"
-                (click)="openCourse(course)">
-              <div class="course-code">{{ course.courseAbbreviation }}</div>
-              <div class="course-name">{{ course.courseName }}</div>
-              <div class="course-credits">{{ course.credits }} cr</div>
-            </div>
-          }
+        <div class="map-row">
+          <div class="year-label">Year {{ year }}</div>
+          <div class="courses-row">
+            @if (!groupedByYear[year] || groupedByYear[year].length === 0) {
+              <div class="empty-year">No courses</div>
+            }
+            @for (course of groupedByYear[year]; track course.courseId) {
+              <div class="course-card"
+                   [class.completed]="getCourseStatus(course) === 'completed'"
+                   [class.ongoing]="getCourseStatus(course) === 'ongoing'"
+                   [class.not-started]="getCourseStatus(course) === 'not-started'"
+                   (click)="openCourse(course)">
+                <div class="course-code">{{ course.courseAbbreviation }}</div>
+                <div class="course-name">{{ course.courseName }}</div>
+                <div class="course-credits">{{ course.credits }} cr</div>
+                <div class="status-dot"></div>
+              </div>
+            }
+          </div>
         </div>
       }
     </div>
@@ -58,9 +65,12 @@
       </div>
       <div class="flex gap-sm" style="justify-content:flex-end;">
         <button class="btn btn-ghost" (click)="closeModal()">Close</button>
-        <a routerLink="/student/courses" class="btn btn-primary" (click)="closeModal()">
-          View in Catalogue →
-        </a>
+          <a [routerLink]="['/student/courses']" 
+             [queryParams]="{ courseId: selectedCourse?.courseId }"
+             class="btn btn-primary" 
+             (click)="closeModal()">
+            View in Catalogue →
+          </a>
       </div>
     </div>
   </div>
