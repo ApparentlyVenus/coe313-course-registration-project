@@ -21,6 +21,8 @@ export class Login {
   async onSubmit(): Promise<void> {
     this.error = '';
     this.loading = true;
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
     try {
       const res = await this.authService.login({
         email: this.email,
@@ -29,7 +31,7 @@ export class Login {
       if (res.role === 'ADMIN') 
         this.router.navigate(['/admin/dashboard']);
       else 
-        this.router.navigate(['/student/courses']);
+        this.router.navigate(['/student/dashboard']);
     } catch (err: any) {
       this.error = err?.error?.message || 'Invalid email or password';
     } finally {

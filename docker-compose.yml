@@ -19,6 +19,7 @@ services:
       MYSQL_DATABASE: course_registration
     volumes:
       - ./mariadb/init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./mariadb/scraped_courses.sql:/docker-entrypoint-initdb.d/02_scraped_courses.sql
       - db_data:/var/lib/mysql
     secrets:
       - db_password

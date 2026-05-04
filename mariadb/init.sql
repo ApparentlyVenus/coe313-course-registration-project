@@ -200,20 +200,20 @@ INSERT INTO major (name, abbreviation, total_credits_required, school_id) VALUES
 -- USERS  (password is bcrypt of "password123")
 -- ============================================================
 INSERT INTO users (email, password, role) VALUES
-('admin@lau.edu.lb',   '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'ADMIN'),
-('coe@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('ele@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('mee@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('cie@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('che@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('csc@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('mth@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('bus@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('acc@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('arch@lau.edu.lb',    '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('phar@lau.edu.lb',    '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('nur@lau.edu.lb',     '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT'),
-('comm@lau.edu.lb',    '$2a$10$7EqJtq98hPqEX7fNZaFWoOe3XLp/PQsF4QEFBEMhg7O9.LlD4VBWW', 'STUDENT');
+('admin@lau.edu.lb',   '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'ADMIN'),
+('coe@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('ele@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('mee@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('cie@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('che@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('csc@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('mth@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('bus@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('acc@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('arch@lau.edu.lb',    '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('phar@lau.edu.lb',    '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('nur@lau.edu.lb',     '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT'),
+('comm@lau.edu.lb',    '$2b$12$hY/6RaRnlNqrQM2pVSNe1O0jIOpEuAZm9OLQraarZg1oUox9BQVSa', 'STUDENT');
 
 -- ============================================================
 -- STUDENTS  (one per major, major_id matches order above)

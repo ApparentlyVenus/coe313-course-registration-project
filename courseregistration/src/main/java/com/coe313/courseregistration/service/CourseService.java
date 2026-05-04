@@ -27,7 +27,7 @@ public class CourseService {
      * Returns all courses in the system.
      * Can take schoolId or departmentId as optional parameters
      */
-    public List<CourseResponse> getAllCourses(Integer schoolId, Integer departmentId) {
+    public List<CourseResponse> getAllCourses(Integer schoolId, Integer departmentId) { 
         if (departmentId != null) {
             return courseRepository.findByDepartment_DepartmentId(departmentId)
                 .stream().map(this::mapToResponse).toList();
@@ -36,7 +36,7 @@ public class CourseService {
             return courseRepository.findByDepartment_School_SchoolId(schoolId)
                 .stream().map(this::mapToResponse).toList();
         }
-        return courseRepository.findAll()
+        return courseRepository.findAllWithPrerequisites()
             .stream().map(this::mapToResponse).toList();
     }
 
