@@ -66,7 +66,7 @@
       <div class="flex gap-sm" style="justify-content:flex-end;">
         <button class="btn btn-ghost" (click)="closeModal()">Close</button>
           <a [routerLink]="['/student/courses']" 
-             [queryParams]="{ courseId: selectedCourse?.courseId }"
+             [queryParams]="{ courseId: selectedCourse!.courseId }"
              class="btn btn-primary" 
              (click)="closeModal()">
             View in Catalogue →

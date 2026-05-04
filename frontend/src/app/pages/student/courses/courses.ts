@@ -7,6 +7,7 @@ import { CourseResponse } from '../../../shared/models/course.model';
 import { DepartmentResponse } from '../../../shared/models/department.model';
 import { SectionResponse } from '../../../shared/models/section.model';
 import { Enrollment } from '../../../core/services/enrollment.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-student-courses',
@@ -19,6 +20,7 @@ export class Courses implements OnInit {
     private courseService = inject(Course);
     private departmentService = inject(DepartmentService);
     private enrollmentService = inject(Enrollment);
+    private route = inject(ActivatedRoute);
 
     courses: CourseResponse[] = [];
     departments: DepartmentResponse[] = [];
@@ -50,6 +52,13 @@ export class Courses implements OnInit {
             this.courseService.getAllForStudent(),
             this.departmentService.getAll()
         ]);
+
+        const courseId = this.route.snapshot.queryParamMap.get('courseId');
+        if (courseId) {
+            const course = this.courses.find(c => c.courseId === +courseId);
+            if (course) 
+                this.openCourse(course);
+        }
     }
 
     applySearch(): void {
