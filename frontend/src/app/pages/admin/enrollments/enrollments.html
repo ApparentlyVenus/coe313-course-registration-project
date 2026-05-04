@@ -34,8 +34,8 @@
                 <div class="text-muted text-xs">{{ e.courseAbbreviation }}</div>
               </td>
               <td class="text-accent">{{ e.crn }}</td>
-              <td>{{ e.professorName || '—' }}</td>
-              <td><span class="badge" [ngClass]="statusClass(e.status)">{{ e.status }}</span></td>
+              <td>{{ e.studentName || '—' }}</td>
+              <td><span class="badge" [ngClSass]="statusClass(e.status)">{{ e.status }}</span></td>
               <td class="text-muted text-xs">{{ formatDate(e.enrolledAt) }}</td>
               <td>
                 <div class="flex gap-sm" style="justify-content:flex-end;">

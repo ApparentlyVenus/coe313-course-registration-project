@@ -4,6 +4,7 @@ export interface EnrollmentResponse {
     courseAbbreviation: string;
     crn: number;
     sectionNumber: number;
+    studentName: string;
     professorName: string;
     status: string;
     enrolledAt: string;

@@ -404,6 +404,7 @@ public class EnrollmentService {
             enrollment.getSection().getCourse().getAbbreviation(),
             enrollment.getSection().getCrn(),
             enrollment.getSection().getSectionNumber(),
+            enrollment.getStudent().getFirstName() + " " + enrollment.getStudent().getLastName(),
             enrollment.getSection().getProfessor() != null
                 ? enrollment.getSection().getProfessor().getFirstName() + " " +
                   enrollment.getSection().getProfessor().getLastName()

@@ -13,6 +13,7 @@ public class EnrollmentResponse {
     private String courseAbbreviation;
     private Integer crn;
     private Integer sectionNumber;
+    private String studentName;
     private String professorName;
     private String status;
     private LocalDateTime enrolledAt;
