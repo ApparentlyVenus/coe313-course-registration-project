@@ -1,5 +1,6 @@
 # LAU Course Registration System
 
+
 *This project has been created as part of the COE313 curriculum by Omar Dana, Yasmina Hijazi, and Majd Jebbeh.*
 
 
